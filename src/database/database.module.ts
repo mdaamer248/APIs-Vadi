@@ -15,7 +15,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
         // port: configService.get<number>('DATABASE_PORT'),
         // username: configService.get<string>('DATABASE_USERNAME'),
         // password: configService.get<string>('DATABASE_PASSWORD'),
-        // entities: ['dist/**/*.entity{.ts,.js}'],
+        entities: ['dist/**/*.entity{.ts,.js}'],
         namingStrategy: new SnakeNamingStrategy(),
          synchronize: true,
         url: process.env.DATABASE_URL,
