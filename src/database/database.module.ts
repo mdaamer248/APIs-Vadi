@@ -20,7 +20,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
          synchronize: true,
         url: process.env.DATABASE_URL,
         ssl: {
-          rejectUnauthorized: false,
+           rejectUnauthorized: false,
         },
       }),
     }),
