@@ -12,7 +12,7 @@ export class MailService {
   async sendUserConfirmationMail(email: string, validationCode: number) {
     const [investor] = await this.investorService.find(email);
     const sendMail = await this.mailerService.sendMail({
-      to: 'mdaamer248@gmail.com',
+      to: email,
       subject: 'Welcome to Vadi,Here is your code',
       text: 'welcome',
       html: `<b style="font-weight:200;font-size:18px;">Hello,Thanks for signup!</b>

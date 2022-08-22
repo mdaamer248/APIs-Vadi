@@ -3,11 +3,6 @@ import { IsEmail, IsNotEmpty, isNotEmpty, IsString } from "class-validator";
 
 
 export class CreateInvestorDto {
-    @ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	userName: string;
-
 	@ApiProperty()
 	@IsNotEmpty()
 	@IsEmail()
@@ -17,4 +12,13 @@ export class CreateInvestorDto {
 	@IsNotEmpty()
 	@IsString()
 	password: string;
+
+	@ApiProperty()
+	@IsString()
+	refferalCode: string;
+
+	@ApiProperty()
+	@IsNotEmpty()
+	@IsString()
+	role: string;
 }

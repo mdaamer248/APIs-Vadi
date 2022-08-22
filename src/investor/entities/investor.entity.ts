@@ -11,7 +11,7 @@ export class Investor {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({nullable: true})
   userName: string;
 
   @Column()
@@ -19,6 +19,12 @@ export class Investor {
 
   @Column()
   password: string;
+
+  @Column()
+  refferalCode: string;
+
+  @Column()
+  role: string;
 
   @Column({default: false})
   isConfirmed: boolean;

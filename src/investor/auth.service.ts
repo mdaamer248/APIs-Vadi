@@ -24,7 +24,7 @@ export class AuthService {
   ) {}
 
   async signup(createInvestorDto: CreateInvestorDto) {
-    const { userName, email, password } = createInvestorDto;
+    const {email, password, refferalCode, role } = createInvestorDto;
 
     const investors = await this.investorService.find(email);
     if (investors.length) {
@@ -38,17 +38,27 @@ export class AuthService {
     const hashedPassword: string = String(result);
 
     const investor =  await this.investorService.create(
-      userName,
       email,
       hashedPassword,
+      refferalCode,
+      role
     );
+    if(investor) {
+      const code = await this.getOTP(investor.email)
 
-    const payload = { email: investor.email, isInvestor: true };
-    const mail = investor.email;
+      const payload = { email: investor.email, isInvestor: true };
+      const mail = investor.email;
+      const id = investor.id;
+      const otp = code.verificationcode;
     return {
       access_token: this.jwtService.sign(payload),
-      mail
+      message:"registration is success",
+      mail,
+      id,
+      otp
+      
     };
+  }
 
   }
 
@@ -66,10 +76,13 @@ export class AuthService {
 
     const payload = { email: investor.email, isInvestor: true };
     const mail = investor.email;
+    const id = investor.id;
 
     return {
       access_token: this.jwtService.sign(payload),
-      mail
+      message:"Login Success",
+      mail,
+      id
     };
   }
 

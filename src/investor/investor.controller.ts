@@ -21,8 +21,8 @@ import { OTPDto } from './dto/otp.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { PasswordDto } from './dto/password.dto';
 
-@ApiTags('Investor')
-@Controller('investor')
+// @ApiTags('Investor')
+@Controller()
 export class InvestorController {
   constructor(
     private readonly investorService: InvestorService,
@@ -72,14 +72,15 @@ export class InvestorController {
 
   @ApiBearerAuth()
   @UseGuards(InvestorGuard)
-  @Get('auth/getOTP')
+  @Get('auth/resendOTP')
   generateOTP(@Request() req) {
+    console.log(req.token.email);
     return this.authService.getOTP(req.token.email);
   }
 
   @ApiBearerAuth()
   @UseGuards(InvestorGuard)
-  @Post('submitOTP')
+  @Post('verifyOTP')
   submitOTP(@Body() data: OTPDto, @Request() req) {
     return this.authService.submitOTP(
       req.token.email,
