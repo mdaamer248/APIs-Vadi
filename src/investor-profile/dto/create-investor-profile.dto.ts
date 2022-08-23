@@ -3,39 +3,60 @@ import { IsEmail, IsNotEmpty, isNotEmpty, IsString, IsDate, IsNumber, IsOptional
 
 
 export class CreateInvestorProfileDto {
-	@ApiProperty()
-	@IsEmpty()
-	email: string;
 
+	// @ApiProperty()
+	// @IsEmpty()
+	// userId: number;
+
+	@ApiProperty()
+	@IsNotEmpty()
+	range: string;
+
+	@ApiProperty()
+	@IsNotEmpty()
+	lower: string;
+
+	@ApiProperty()
+	@IsNotEmpty()
+	upper: string;
+
+	// @IsNotEmpty()
+	// @ApiProperty()
+	// @IsNotEmpty()
+	// email: string;
+
+	@ApiProperty()
+	@IsNotEmpty()
+	fundAmount: number;
 
     @ApiProperty()
 	@IsNotEmpty()
 	@IsString()
 	firstName: string;
 
-
     @ApiProperty()
 	@IsNotEmpty()
 	@IsString()
 	lastName: string;
 
-
 	@ApiProperty()
 	@IsNotEmpty()
 	@IsString()
-	dateOfBirth: string;
+	dateOfBirth: Date;
 
     @ApiProperty()
 	@IsNotEmpty()
 	@IsString()
 	countryOfBirth: string;
 
-
     @ApiProperty()
 	@IsNotEmpty()
-	@IsString()
-	nationality: string;
+	countryCode: number;
 
+	//@IsNotEmpty()
+	// @ApiProperty()
+	// @IsNotEmpty()
+	// email: string;
 
     @ApiProperty()
 	@IsOptional()
@@ -53,6 +74,10 @@ export class CreateInvestorProfileDto {
 	@IsNumber()
 	phoneNumber: number;
 
+	@ApiProperty()
+	@IsNotEmpty()
+	@IsNumber()
+	tax: number;
 
     @ApiProperty()
 	@IsNotEmpty()
@@ -101,5 +126,16 @@ export class CreateInvestorProfileDto {
 	@IsNotEmpty()
 	@IsString()
 	state: string;
+
+	@ApiProperty()
+	@IsNotEmpty()
+	@IsString()
+	documentNo: string;
+
+	@ApiProperty()
+	@IsNotEmpty()
+	@IsString()
+	isGeo: string;
+
 
 }

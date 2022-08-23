@@ -26,8 +26,8 @@ import { InvestorGuard } from 'src/guards/investor.guard';
 
 
 
-@ApiTags('InvestorProfile')
-@Controller('investor-profile')
+@ApiTags('Profile')
+@Controller('profile')
 export class InvestorProfileController {
   constructor(
     private readonly investorProfileService: InvestorProfileService,

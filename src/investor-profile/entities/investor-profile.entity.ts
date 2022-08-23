@@ -7,7 +7,7 @@ import {
 import { InvestorLevel } from './investor-level.enum';
 
 @Entity()
-@Unique(['email'])
+// @Unique(['email'])
 export class InvestorProfile {
   @PrimaryGeneratedColumn()
   id: number;
@@ -15,8 +15,17 @@ export class InvestorProfile {
   @Column()
   email: string;
 
-  @Column({ type: "enum", enum: InvestorLevel, default: InvestorLevel.LevelOne})
-  investorLevel: InvestorLevel;
+  // @Column({ type: "enum", enum: InvestorLevel, default: InvestorLevel.LevelOne})
+  // investorLevel: InvestorLevel;
+
+  @Column()
+  range: string;
+
+  @Column()
+  lower: string;
+
+  @Column()
+  upper: string;
 
   @Column({nullable: true})
   fundAmount: number;
@@ -31,13 +40,13 @@ export class InvestorProfile {
   lastName: string;
 
   @Column()
-  dateOfBirth: string;
+  dateOfBirth: Date;
 
   @Column()
   countryOfBirth: string;
 
   @Column()
-  nationality: string;
+  countryCode: number;
 
   @Column({nullable: true})
   cURP: number;
@@ -47,6 +56,9 @@ export class InvestorProfile {
 
   @Column()
   phoneNumber: number;
+
+  @Column()
+  tax: number;
 
   @Column()
   occupation: string;
@@ -86,4 +98,7 @@ export class InvestorProfile {
 
   @Column({nullable: true})
   addressDoc: string;
+
+  @Column({nullable: true})
+  isGeo: string;
 }

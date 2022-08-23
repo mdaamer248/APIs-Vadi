@@ -11,10 +11,19 @@ export class InvestorProfileService {
   constructor(@InjectRepository(InvestorProfile) private investorProfileRepository: Repository<InvestorProfile>){}
 
   async create(createInvestorProfileDto: CreateInvestorProfileDto, email: string) {
-    createInvestorProfileDto.email = email;
-    const investorProfile = await this.investorProfileRepository.create(createInvestorProfileDto);
-    await this.investorProfileRepository.save(investorProfile);
-    return investorProfile;
+    //createInvestorProfileDto.email = email;
+    const [profile] = await this.investorProfileRepository.find({where:{email}});
+    
+    if(!profile){ 
+  
+      const investorProfile = await this.investorProfileRepository.create(createInvestorProfileDto);
+      investorProfile.email = email;
+      await this.investorProfileRepository.save(investorProfile);
+      return investorProfile;
+    }
+    else{
+      return { message:"profile already created"}
+    }
   }
 
 
@@ -51,8 +60,8 @@ export class InvestorProfileService {
   // Get investor Level Details
   async getInvestorLevel(email: string){
     const investorProfile = await this.findOne(email);
-    const {investorLevel, fundAmount, totalAmountFunded} = investorProfile;
-    return {investorLevel, fundAmount, totalAmountFunded};
+    const { fundAmount, totalAmountFunded} = investorProfile;
+    return {fundAmount, totalAmountFunded};
   }
 
   findAll() {
