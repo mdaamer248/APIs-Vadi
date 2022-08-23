@@ -26,7 +26,7 @@ export class InvestorService {
       await this.investorRepository.save(newInvestor);
       return newInvestor;
     } catch (err) {
-      console.log('Error creating Investor', err);
+      console.log('Error creating user', err);
       throw new InternalServerErrorException();
     }
   }
@@ -45,7 +45,7 @@ export class InvestorService {
     } = updateInvestorDto;
     const investor = await this.findOne(id);
     if (!investor)
-      throw new HttpException('Investor not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
     if (newPassword) investor.password = newPassword;
     if (newEmail) investor.email = newEmail;
@@ -57,7 +57,7 @@ export class InvestorService {
     if (newIsConfirmed) investor.isConfirmed = true;
 
     await this.investorRepository.save(investor);
-    return `Investor ${investor.email} has been updated!`;
+    return `User ${investor.email} has been updated!`;
   }
 
 

@@ -19,7 +19,10 @@ export class InvestorProfileService {
       const investorProfile = await this.investorProfileRepository.create(createInvestorProfileDto);
       investorProfile.email = email;
       await this.investorProfileRepository.save(investorProfile);
-      return investorProfile;
+      return {
+        investorProfile,
+        message: 'profile created successfully'
+      }
     }
     else{
       return { message:"profile already created"}

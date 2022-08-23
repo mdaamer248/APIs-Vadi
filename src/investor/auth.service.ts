@@ -65,7 +65,7 @@ export class AuthService {
   async signin(email: string, password: string) {
     const [investor] = await this.investorService.find(email);
     if (!investor) {
-      throw new NotFoundException('Investor not found');
+      throw new NotFoundException('User not found with this email');
     }
 
     const [salt, storedHash] = investor.password.split('.');
@@ -103,7 +103,7 @@ export class AuthService {
   // Send Investor an email with the link to reset password
   async sendUserPasswordResetMail(email: string) {
     const [investor] = await this.investorService.find(email);
-    if (!investor) throw new HttpException('Investor does not exists.', 404);
+    if (!investor) throw new HttpException('User does not exists.', 404);
 
     const resetToken = randomBytes(16).toString('hex');
     
@@ -118,7 +118,7 @@ export class AuthService {
   // Reset the investor's password
   async resetPassword(resetToken: string, email:string, newPassword: string) {
     const [investor] = await this.investorService.find(email);
-    if (!investor) throw new HttpException('Investor does not exists.', 404);
+    if (!investor) throw new HttpException('User does not exists.', 404);
     
     if (investor.resetTokenIssuedAt + 300 < Math.floor(Date.now() / 1000))
       throw new HttpException('Invalid Token', 400);
@@ -134,7 +134,9 @@ export class AuthService {
     this.investorService.update(investor.id, {newPassword: hashedPassword});
 
 
-    return 'Your password has been changed';
+    return {
+      message:'Your password has been changed'
+    }
   }
 
   // Get Otp for verifying Email address of investor
@@ -159,7 +161,9 @@ export class AuthService {
     const newIsConfirmed = true;
     
     await this.investorService.update(investor.id, {newIsConfirmed});
-    return ' Investor Conirmed his/her Email';
+    return {
+      message: 'User Confirmed his/her Email'
+    }
   }
 
 }
