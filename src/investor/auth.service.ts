@@ -65,13 +65,20 @@ export class AuthService {
   async signin(email: string, password: string) {
     const [investor] = await this.investorService.find(email);
     if (!investor) {
-      throw new NotFoundException('User not found with this email');
+      return {
+        message: 'User not found with this Email'
+      }
+      //throw new NotFoundException('User not found with this email');
     }
 
     const [salt, storedHash] = investor.password.split('.');
     const hash = (await scrypt(password, salt, 32)) as Buffer;
     if (storedHash !== hash.toString('hex')) {
-      throw new BadRequestException('Email or Password is wrong');
+
+      return {
+        message: 'Email or Password is wrong'
+      }
+      //throw new BadRequestException('Email or Password is wrong');
     }
 
     const payload = { email: investor.email, isInvestor: true };
@@ -93,7 +100,10 @@ export class AuthService {
     const [salt, storedHash] = investor.password.split('.');
     const hash = (await scrypt(password, salt, 32)) as Buffer;
     if (storedHash !== hash.toString('hex')) {
-      throw new BadRequestException('Incorrect password');
+      return {
+        mesage:'Incorrect password'
+      }
+      //throw new BadRequestException('Incorrect password');
     }
 
     return true;
