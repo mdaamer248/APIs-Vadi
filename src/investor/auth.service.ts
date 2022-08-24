@@ -26,11 +26,16 @@ export class AuthService {
   async signup(createInvestorDto: CreateInvestorDto) {
     const {email, password, refferalCode, role } = createInvestorDto;
 
-    const investors = await this.investorService.find(email);
+    const [investors] = await this.investorService.find(email);
     if (investors) {
+ 
+      if(investors.isConfirmed == true){
       return {
         message: 'Email already in use' 
       }
+     }else{
+      return {message: 'Please verify your Account'}
+     }
       //throw new BadRequestException('Email already in use');
     }
 
