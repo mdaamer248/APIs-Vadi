@@ -45,7 +45,7 @@ export class InvestorService {
     } = updateInvestorDto;
     const investor = await this.findOne(id);
     if (!investor)
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      return { message: 'User not found' }
 
     if (newPassword) investor.password = newPassword;
     if (newEmail) investor.email = newEmail;

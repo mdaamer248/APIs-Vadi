@@ -27,8 +27,11 @@ export class AuthService {
     const {email, password, refferalCode, role } = createInvestorDto;
 
     const investors = await this.investorService.find(email);
-    if (investors.length) {
-      throw new BadRequestException('Email already in use');
+    if (investors) {
+      return {
+        message: 'Email already in use' 
+      }
+      //throw new BadRequestException('Email already in use');
     }
 
    
@@ -49,14 +52,12 @@ export class AuthService {
       const payload = { email: investor.email, isInvestor: true };
       const mail = investor.email;
       const id = investor.id;
-      const otp = code.verificationcode;
+      //const otp = code.verificationcode;
     return {
       access_token: this.jwtService.sign(payload),
-      message:"registration is success",
+      message:"registration is success,Verification code has been sent to your Mail",
       mail,
-      id,
-      otp
-      
+      id
     };
   }
 
@@ -84,13 +85,21 @@ export class AuthService {
     const payload = { email: investor.email, isInvestor: true };
     const mail = investor.email;
     const id = investor.id;
-
-    return {
-      access_token: this.jwtService.sign(payload),
-      message:"Login Success",
-      mail,
-      id
-    };
+    const isVerified = investor.isConfirmed;
+    if(isVerified == true){
+     return {
+       access_token: this.jwtService.sign(payload),
+       message:"Login Success",
+       isVerified,
+       mail,
+       id
+      };
+    }else{
+      return{
+        access_token: this.jwtService.sign(payload),
+        isVerified,
+      }
+    }
   }
 
 
@@ -113,14 +122,15 @@ export class AuthService {
   // Send Investor an email with the link to reset password
   async sendUserPasswordResetMail(email: string) {
     const [investor] = await this.investorService.find(email);
-    if (!investor) throw new HttpException('User does not exists.', 404);
+    if (!investor) return { message:'User does not exists.'}
 
     const resetToken = randomBytes(16).toString('hex');
     
     const payload = {email, resetToken, isInvestor: true};
     const access_token = this.jwtService.sign(payload);
 
-    await this.mailService.sendUserPasswordResetEMail(email, access_token);
+    const result = await this.mailService.sendUserPasswordResetEMail(email, access_token);
+    return result;
   }
 
 
@@ -128,10 +138,10 @@ export class AuthService {
   // Reset the investor's password
   async resetPassword(resetToken: string, email:string, newPassword: string) {
     const [investor] = await this.investorService.find(email);
-    if (!investor) throw new HttpException('User does not exists.', 404);
+    if (!investor) return { message:'User does not exists.'}
     
     if (investor.resetTokenIssuedAt + 300 < Math.floor(Date.now() / 1000))
-      throw new HttpException('Invalid Token', 400);
+      return { message: 'Invalid token' }
 
     
     if (resetToken!= investor.resetToken) throw new BadRequestException();
@@ -161,12 +171,12 @@ export class AuthService {
   async submitOTP(email: string, otp: number, timeStamp: number) {
     const [investor] = await this.investorService.find(email);
 
-    if (investor.isConfirmed) throw new HttpException('Already Verified', 400);
+    if (investor.isConfirmed) return {message: 'Already Verified' }
     if (investor.otpIssuedAt + 300 < timeStamp)
-      throw new HttpException('Invalid OTP', 400);
+      return { message:'Invalid OTP' }
 
     if (investor.validationCode != otp)
-      throw new HttpException('Wrong OTP', 400);
+      return { message: 'Wrong OTP' }
 
     const newIsConfirmed = true;
     

@@ -71,7 +71,7 @@ export class MailService {
       await this.investorService.update(investor.id, {newResetToken, newResetTokenIssuedAt})
       return {
         code: 200,
-        message: 'mail sent',
+        message: 'Mail sent successfully',
       };
     }
   }
