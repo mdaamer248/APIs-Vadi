@@ -54,6 +54,7 @@ export class InvestorController {
 
   @Get('get-password-reset-link/:email')
   getPasswordResetLink(@Param('email') email: string) {
+    console.log(email);
     return this.authService.sendUserPasswordResetMail(email);
   }
 
@@ -70,20 +71,22 @@ export class InvestorController {
     );
   }
 
-  @ApiBearerAuth()
-  @UseGuards(InvestorGuard)
-  @Get('auth/resendOTP')
-  generateOTP(@Request() req) {
-    console.log(req.token.email);
-    return this.authService.getOTP(req.token.email);
+  // @ApiBearerAuth()
+  // @UseGuards(InvestorGuard)
+  @Get('auth/resendOTP/:email')
+  generateOTP(@Param('email') email: string) {
+    console.log(email);
+    // console.log(req.token.email);
+    return this.authService.getOTP(email);
   }
 
-  @ApiBearerAuth()
-  @UseGuards(InvestorGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(InvestorGuard)
   @Post('verifyOTP')
-  submitOTP(@Body() data: OTPDto, @Request() req) {
+  submitOTP(@Body() data: OTPDto) {
+    //console.log(req.token.email);
     return this.authService.submitOTP(
-      req.token.email,
+      data.email,
       data.otp,
       data.timeStamp,
     );
