@@ -60,7 +60,7 @@ export class AuthService {
       //const otp = code.verificationcode;
     return {
       access_token: this.jwtService.sign(payload),
-      message:"registration is success,Verification code has been sent to your Mail",
+      message:"Success,Verification code has been sent to your Mail",
       mail,
       id
     };
