@@ -39,6 +39,9 @@ export class InvestorProfile {
   @Column()
   lastName: string;
 
+  @Column({nullable: true})
+  fullName: string;
+
   @Column()
   dateOfBirth: Date;
 
@@ -101,4 +104,10 @@ export class InvestorProfile {
 
   @Column({nullable: true})
   isGeo: string;
+
+  @Column({default: false})
+  isEmailVerified: boolean;
+
+  @Column({default: false})
+  isProfileCompleted: boolean;
 }

@@ -42,6 +42,11 @@ export class CreateInvestorProfileDto {
 	@ApiProperty()
 	@IsNotEmpty()
 	@IsString()
+	fullName: string;
+
+	@ApiProperty()
+	@IsNotEmpty()
+	@IsString()
 	dateOfBirth: Date;
 
     @ApiProperty()
@@ -53,10 +58,6 @@ export class CreateInvestorProfileDto {
 	@IsNotEmpty()
 	countryCode: number;
 
-	//@IsNotEmpty()
-	// @ApiProperty()
-	// @IsNotEmpty()
-	// email: string;
 
     @ApiProperty()
 	@IsOptional()
@@ -136,6 +137,16 @@ export class CreateInvestorProfileDto {
 	@IsNotEmpty()
 	@IsString()
 	isGeo: string;
+
+	@ApiProperty()
+	@IsNotEmpty()
+	isEmailVerified: boolean;
+
+	@ApiProperty()
+	@IsNotEmpty()
+	isProfileCompleted: boolean;
+
+
 
 
 }

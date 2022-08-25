@@ -37,9 +37,9 @@ export class InvestorProfileController {
   //Create Profile of Investor
   @ApiBearerAuth()
   @UseGuards(InvestorGuard)
-  @Post('create')
-  create(@Body() createInvestorProfileDto: CreateInvestorProfileDto, @Request() req) {
-    const email = req.token.email;
+  @Post('create/:email')
+  create(@Body() createInvestorProfileDto: CreateInvestorProfileDto,@Param('email') email: string) {
+    //const email = req.token.email;
     return this.investorProfileService.create(createInvestorProfileDto,email);
   }
 
