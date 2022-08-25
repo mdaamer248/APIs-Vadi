@@ -77,6 +77,7 @@ export class AuthService {
   async signin(email: string, password: string) {
     const [investor] = await this.investorService.find(email);
     const [profile] = await this.investorProfileRepository.find({where:{email}});
+    console.log(profile);
 
     if (!investor) {
       return {
@@ -99,22 +100,26 @@ export class AuthService {
     const mail = investor.email;
     const id = investor.id;
     const isVerified = investor.isConfirmed;
-    const isProfileCompleted = profile.isProfileCompleted;
-    if(isVerified == true){
-     return {
-       access_token: this.jwtService.sign(payload),
-       message:"Login Success",
-       isVerified,
-       mail,
-       id,
-       isProfileCompleted
-      };
-    }else{
-      return{
+    if(profile && isVerified == true){
+     const isProfileCompleted = profile.isProfileCompleted;
+      
+        return {
+         access_token: this.jwtService.sign(payload),
+         message:"Login Success",
+         isVerified,
+         mail,
+         id,
+         isProfileCompleted
+        };
+      }
+       else{
+        const isProfileCompleted = false;
+        return{
         //access_token: this.jwtService.sign(payload),
         isVerified,
+        isProfileCompleted
+         }
       }
-    }
   }
 
 
