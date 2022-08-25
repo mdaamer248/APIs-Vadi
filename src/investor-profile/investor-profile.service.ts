@@ -37,7 +37,7 @@ export class InvestorProfileService {
     if(type == 'back') investorProfile.idBackSide = docName;
     if(type == 'address') investorProfile.addressDoc = docName;
     await this.investorProfileRepository.save(investorProfile);
-    return investorProfile;
+    return { message: 'uploaded successfully'}
   }
 
 

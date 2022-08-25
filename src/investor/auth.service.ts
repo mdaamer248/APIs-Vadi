@@ -13,6 +13,10 @@ import { CreateInvestorDto } from './dto/create-investor.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as jwt from 'jsonwebtoken';
 import { JwtPayload } from './interface/jwt-payload.interface';
+import { InvestorProfile } from 'src/investor-profile/entities/investor-profile.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
 const scrypt = promisify(_scrypt);
 
 @Injectable()
@@ -21,6 +25,8 @@ export class AuthService {
     private investorService: InvestorService,
     private jwtService: JwtService,
     private mailService: MailService,
+    @InjectRepository(InvestorProfile) 
+    private investorProfileRepository: Repository<InvestorProfile>
   ) {}
 
   async signup(createInvestorDto: CreateInvestorDto) {
@@ -70,6 +76,8 @@ export class AuthService {
 
   async signin(email: string, password: string) {
     const [investor] = await this.investorService.find(email);
+    const [profile] = await this.investorProfileRepository.find({where:{email}});
+
     if (!investor) {
       return {
         message: 'User not found with this Email'
@@ -91,13 +99,15 @@ export class AuthService {
     const mail = investor.email;
     const id = investor.id;
     const isVerified = investor.isConfirmed;
+    const isProfileCompleted = profile.isProfileCompleted;
     if(isVerified == true){
      return {
        access_token: this.jwtService.sign(payload),
        message:"Login Success",
        isVerified,
        mail,
-       id
+       id,
+       isProfileCompleted
       };
     }else{
       return{
@@ -128,7 +138,7 @@ export class AuthService {
   async sendUserPasswordResetMail(email: string) {
     const [investor] = await this.investorService.find(email);
     if (!investor) return { message:'User does not exists.'}
-
+    {nullable: true}
     const resetToken = randomBytes(16).toString('hex');
     
     const payload = {email, resetToken, isInvestor: true};

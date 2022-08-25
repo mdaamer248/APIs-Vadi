@@ -10,10 +10,13 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
 import { MailService } from './mail/mail.service';
+import { InvestorProfile } from 'src/investor-profile/entities/investor-profile.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Investor]),
+    TypeOrmModule.forFeature([InvestorProfile]),
+
     ConfigModule.forRoot({
       envFilePath:'.env',
     }),
