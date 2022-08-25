@@ -35,8 +35,8 @@ export class InvestorProfileController {
 
 
   //Create Profile of Investor
-  @ApiBearerAuth()
-  @UseGuards(InvestorGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(InvestorGuard)
   @Post('create/:email')
   create(@Body() createInvestorProfileDto: CreateInvestorProfileDto,@Param('email') email: string) {
     //const email = req.token.email;
@@ -56,8 +56,8 @@ export class InvestorProfileController {
 
 
   // Get the level of Investor and other details related with funds
-  @ApiBearerAuth()
-  @UseGuards(InvestorGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(InvestorGuard)
   @Get('get-investor-level')
   async getInvestorLevel(@Request() req) {
     const email = req.token.email;
@@ -69,12 +69,12 @@ export class InvestorProfileController {
 
   
   //Upload front side of documents
-  @ApiBearerAuth()
-  @UseGuards(InvestorGuard)
-  @Post('file/upload/idFront')
+  // @ApiBearerAuth()
+  // @UseGuards(InvestorGuard)
+  @Post('file/upload/idFront/:email')
   @UseInterceptors(FileInterceptor('file', storage))
-  async uploadFile(@UploadedFile() file, @Request() req) {
-    const email = req.token.email;
+  async uploadFile(@UploadedFile() file,@Param('email') email: string) {
+    //const email = req.token.email;
     const investorProfile = await this.investorProfileService.saveDoc(
       email,
       file.filename,
@@ -85,12 +85,12 @@ export class InvestorProfileController {
 
 
   //Upload Backside of Documents
-  @ApiBearerAuth()
-  @UseGuards(InvestorGuard)
-  @Post('file/upload/idBackSide')
+  // @ApiBearerAuth()
+  // @UseGuards(InvestorGuard)
+  @Post('file/upload/idBackSide/:email')
   @UseInterceptors(FileInterceptor('file', storage))
-  async uploadFileBack(@UploadedFile() file, @Request() req) {
-    const email = req.token.email;
+  async uploadFileBack(@UploadedFile() file, @Param('email') email: string) {
+    //const email = req.token.email;
     const investorProfile = await this.investorProfileService.saveDoc(
       email,
       file.filename,
@@ -101,12 +101,12 @@ export class InvestorProfileController {
 
 
   //Upload proof of address
-  @ApiBearerAuth()
-  @UseGuards(InvestorGuard)
-  @Post('file/upload/idAddress')
+  // @ApiBearerAuth()
+  // @UseGuards(InvestorGuard)
+  @Post('file/upload/idAddress/:email')
   @UseInterceptors(FileInterceptor('file', storage))
-  async uploadFileAddress(@UploadedFile() file, @Request() req) {
-    const email = req.token.email;
+  async uploadFileAddress(@UploadedFile() file, @Param('email') email: string) {
+    //const email = req.token.email;
     const investorProfile = await this.investorProfileService.saveDoc(
       email,
       file.filename,
@@ -118,8 +118,8 @@ export class InvestorProfileController {
 
 
   //Get the uploaded images
-  @ApiBearerAuth()
-  @UseGuards(InvestorGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(InvestorGuard)
   @Get('profile-image/:imagename')
   async findProfileImage(
     @Param('imagename') imagename,
