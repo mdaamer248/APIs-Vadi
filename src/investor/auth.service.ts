@@ -116,6 +116,7 @@ export class AuthService {
         const isProfileCompleted = false;
         return{
         //access_token: this.jwtService.sign(payload),
+        message:"Login Success",
         isVerified,
         isProfileCompleted
          }
