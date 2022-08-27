@@ -44,11 +44,11 @@ export class InvestorController {
     return investor;
   }
 
-  @ApiBearerAuth()
-  @UseGuards(InvestorGuard)
-  @Post('/auth/validate-password')
-  async validatePassword(@Request() req, @Body() data: PasswordDto){
-    const response = await this.authService.validatePassword(req.token.email, data.password);
+  // @ApiBearerAuth()
+  // @UseGuards(InvestorGuard)
+  @Post('/investor/validate-password')
+  async validatePassword(@Param('email') email:string, @Body() data: PasswordDto){
+    const response = await this.authService.validatePassword(email, data.password);
     return response;
   }
 
