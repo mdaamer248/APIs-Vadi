@@ -4,34 +4,40 @@ import { UpdateInvestorProfileDto } from './dto/update-investor-profile.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { InvestorProfile } from './entities/investor-profile.entity';
+import { Investor } from 'src/investor/entities/investor.entity';
 
 @Injectable()
 export class InvestorProfileService {
 
-  constructor(@InjectRepository(InvestorProfile) private investorProfileRepository: Repository<InvestorProfile>){}
+  constructor(@InjectRepository(InvestorProfile) private investorProfileRepository: Repository<InvestorProfile>,
+  @InjectRepository(Investor)
+    private investorRepository: Repository<Investor>
+    ){}
 
   async create(createInvestorProfileDto: CreateInvestorProfileDto, email: string) {
     //createInvestorProfileDto.email = email;
+    const [investor] = await this.investorRepository.find({where:{email}});
     const [profile] = await this.investorProfileRepository.find({where:{email}});
-    
-    if(!profile){ 
+    if(!investor){ return {message:'No registration found with this Email'}}
+     if(!profile){ 
   
-      const investorProfile = await this.investorProfileRepository.create(createInvestorProfileDto);
-      investorProfile.email = email;
-      await this.investorProfileRepository.save(investorProfile);
-      return {
-        investorProfile,
-        message: 'profile created successfully'
+       const investorProfile = await this.investorProfileRepository.create(createInvestorProfileDto);
+       investorProfile.email = email;
+       await this.investorProfileRepository.save(investorProfile);
+       return {
+         investorProfile,
+         message: 'profile created successfully'
+       }
       }
-    }
-    else{
-      return { message:"profile already created"}
-    }
+     else{
+       return { message:"profile already created"}
+     }
   }
 
 
   // Save Document name in investorProile
   async saveDoc(email: string, docName: string, type: string){
+    //console.log(email);
     const investorProfile = await this.findOne(email);
     if(type == 'front') investorProfile.idFront = docName;
     if(type == 'back') investorProfile.idBackSide = docName;
