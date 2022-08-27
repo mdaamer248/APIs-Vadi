@@ -127,6 +127,7 @@ export class AuthService {
   // Validate Password
   async validatePassword(email: string, password: string){
     const [investor] = await this.investorService.find(email);
+    if(!investor) return { message: 'No registration found with this Email'}
     const [salt, storedHash] = investor.password.split('.');
     const hash = (await scrypt(password, salt, 32)) as Buffer;
     if (storedHash !== hash.toString('hex')) {
