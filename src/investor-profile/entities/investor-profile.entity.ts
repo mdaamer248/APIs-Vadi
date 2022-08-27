@@ -57,7 +57,7 @@ export class InvestorProfile {
   @Column({ nullable: true})
   rFC: number;
 
-  @Column()
+  @Column({type: "bigint"})
   phoneNumber: number;
 
   @Column()
