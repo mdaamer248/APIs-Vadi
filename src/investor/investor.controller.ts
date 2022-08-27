@@ -46,7 +46,7 @@ export class InvestorController {
 
   // @ApiBearerAuth()
   // @UseGuards(InvestorGuard)
-  @Post('/investor/validate-password')
+  @Post('/investor/validate-password/:email')
   async validatePassword(@Param('email') email:string, @Body() data: PasswordDto){
     const response = await this.authService.validatePassword(email, data.password);
     return response;
