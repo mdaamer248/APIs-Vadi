@@ -140,10 +140,6 @@ export class CreateInvestorProfileDto {
 
 	@ApiProperty()
 	@IsNotEmpty()
-	isEmailVerified: boolean;
-
-	@ApiProperty()
-	@IsNotEmpty()
 	isProfileCompleted: boolean;
 
 

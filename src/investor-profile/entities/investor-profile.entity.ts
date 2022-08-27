@@ -106,8 +106,5 @@ export class InvestorProfile {
   isGeo: string;
 
   @Column({default: false})
-  isEmailVerified: boolean;
-
-  @Column({default: false})
   isProfileCompleted: boolean;
 }
