@@ -14,11 +14,11 @@ export class CreateInvestorProfileDto {
 
 	@ApiProperty()
 	@IsNotEmpty()
-	lower: string;
+	lower: number;
 
 	@ApiProperty()
 	@IsNotEmpty()
-	upper: string;
+	upper: number;
 
 	// @IsNotEmpty()
 	// @ApiProperty()
@@ -89,7 +89,7 @@ export class CreateInvestorProfileDto {
     @ApiProperty()
 	@IsNotEmpty()
 	@IsString()
-	homeAddress: string;
+	nationality: string;
 
 
     @ApiProperty()

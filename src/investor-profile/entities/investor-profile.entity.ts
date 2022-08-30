@@ -22,10 +22,10 @@ export class InvestorProfile {
   range: string;
 
   @Column()
-  lower: string;
+  lower: number;
 
   @Column()
-  upper: string;
+  upper: number;
 
   @Column({nullable: true})
   fundAmount: number;
@@ -67,7 +67,7 @@ export class InvestorProfile {
   occupation: string;
 
   @Column()
-  homeAddress: string;
+  nationality: string;
 
   @Column()
   street: string;

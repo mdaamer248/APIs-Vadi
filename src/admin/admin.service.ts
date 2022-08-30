@@ -12,6 +12,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from './entities/admin.entity';
 import { UpdateAdminDto } from './dto/update-admin.dto';
+import { InvestorProfile } from 'src/investor-profile/entities/investor-profile.entity';
+
 const scrypt = promisify(_scrypt);
 
 @Injectable()
@@ -19,6 +21,8 @@ export class AdminService {
   constructor(
     @InjectRepository(Admin)
     private adminRepository: Repository<Admin>,
+    @InjectRepository(InvestorProfile) 
+    private investorProfileRepository: Repository<InvestorProfile>,
   ) {}
 
   // Create the Admin and save it to the repository.
@@ -82,5 +86,19 @@ export class AdminService {
     const [admin] = await this.adminRepository.find({ where: { email } });
      await this.adminRepository.delete(admin.id);
     return admin;
+  }
+  async findAllInvestors() {
+    const query = this.investorProfileRepository.createQueryBuilder('pr');
+    query
+      .select([
+        'i.id as investor_id,i.role,(i.is_confirmed) as isVerified,pr.*'
+      ])
+      .innerJoin('investor', 'i', 'pr.email = i.email')
+      .groupBy('pr.id,i.id');
+    const result = {
+      count: await query.getCount(),
+      data: await query.getRawMany(),
+    };
+    return result;
   }
 }

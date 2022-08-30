@@ -72,6 +72,11 @@ import {
     findOne(@Param('id') id: string) {
       return this.adminService.findOne(+id);
     }
+
+    @Get('/investorslist')
+    findAllInvestors() {
+      return this.adminService.findAllInvestors();
+    }
   
     // @Patch(':id')
     // update(

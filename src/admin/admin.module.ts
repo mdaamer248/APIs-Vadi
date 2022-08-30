@@ -10,10 +10,14 @@ import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';
 import { AuthService } from './admin.auth.service';
 import { MailService } from './mail/mail.service';
+import { InvestorProfile } from 'src/investor-profile/entities/investor-profile.entity';
+
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Admin]),
+    TypeOrmModule.forFeature([InvestorProfile]),
+
     ConfigModule.forRoot({
       envFilePath:'.env',
     }),
