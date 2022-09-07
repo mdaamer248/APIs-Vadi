@@ -44,7 +44,7 @@ export class MailService {
   //Sending password reset link with mail
   async sendUserPasswordResetEMail(email: string) {
     //const url = `http://localhost:4000/api/investor/reset-password?token=${resetToken}`;
-    const url = `http://134.209.96.231`;
+    const url = `http://134.209.96.231/?email=${email}`;
 
     const [investor] = await this.investorService.find(email);
 
