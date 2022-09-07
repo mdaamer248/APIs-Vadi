@@ -145,28 +145,27 @@ export class AuthService {
   async sendUserPasswordResetMail(email: string) {
     const [investor] = await this.investorService.find(email);
     if (!investor) return { message:'User does not exists.'}
-    {nullable: true}
-    const resetToken = randomBytes(16).toString('hex');
+    //const resetToken = randomBytes(16).toString('hex');
     
-    const payload = {email, resetToken, isInvestor: true};
-    const access_token = this.jwtService.sign(payload);
+    //const payload = {email, resetToken, isInvestor: true};
+    //const access_token = this.jwtService.sign(payload);
 
-    const result = await this.mailService.sendUserPasswordResetEMail(email, access_token);
+    const result = await this.mailService.sendUserPasswordResetEMail(email);
     return result;
   }
 
 
 
   // Reset the investor's password
-  async resetPassword(resetToken: string, email:string, newPassword: string) {
+  async resetPassword(email:string, newPassword: string) {
     const [investor] = await this.investorService.find(email);
     if (!investor) return { message:'User does not exists.'}
     
-    if (investor.resetTokenIssuedAt + 300 < Math.floor(Date.now() / 1000))
-      return { message: 'Invalid token' }
+    //if (investor.resetTokenIssuedAt + 300 < Math.floor(Date.now() / 1000))
+     // return { message: 'Invalid token' }
 
     
-    if (resetToken!= investor.resetToken) throw new BadRequestException();
+    //if (resetToken!= investor.resetToken) throw new BadRequestException();
 
     const salt = randomBytes(8).toString('hex');
     const hash = (await scrypt(newPassword, salt, 32)) as Buffer;

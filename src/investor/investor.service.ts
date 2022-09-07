@@ -15,8 +15,7 @@ import {
 export class InvestorService {
   constructor(
     @InjectRepository(Investor)
-    private investorRepository: Repository<Investor>) {}
-
+    private investorRepository: Repository<Investor>){}
 
   // Create the Investor and save it to the repository.
   async create(email: string, password: string,refferalCode: string,role: string) {

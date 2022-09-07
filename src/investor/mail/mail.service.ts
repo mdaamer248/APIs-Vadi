@@ -42,8 +42,10 @@ export class MailService {
   }
 
   //Sending password reset link with mail
-  async sendUserPasswordResetEMail(email: string, resetToken: string) {
-    const url = `http://localhost:4000/api/investor/reset-password?token=${resetToken}`;
+  async sendUserPasswordResetEMail(email: string) {
+    //const url = `http://localhost:4000/api/investor/reset-password?token=${resetToken}`;
+    const url = `http://134.209.96.231`;
+
     const [investor] = await this.investorService.find(email);
 
     const sendMail = await this.mailerService.sendMail({
@@ -66,12 +68,15 @@ export class MailService {
     });
 
     if (sendMail) {
-      const newResetToken = resetToken;
+      //const newResetToken = resetToken;
       const newResetTokenIssuedAt = Math.floor(Date.now() / 1000);
-      await this.investorService.update(investor.id, {newResetToken, newResetTokenIssuedAt})
+      //await this.investorService.update(investor.id, {newResetToken, newResetTokenIssuedAt})
+      await this.investorService.update(investor.id, {newResetTokenIssuedAt})
+
       return {
         code: 200,
         message: 'Mail sent successfully',
+        email:email
       };
     }
   }

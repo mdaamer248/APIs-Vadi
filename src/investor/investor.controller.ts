@@ -58,15 +58,14 @@ export class InvestorController {
     return this.authService.sendUserPasswordResetMail(email);
   }
 
-  @ApiBearerAuth()
-  @UseGuards(InvestorGuard)
+  //@ApiBearerAuth()
+  //@UseGuards(InvestorGuard)
   @Post('reset-password')
-  changeYourPassword(@Request() req, @Body() body: ResetPasswordDto) {
-    if (req.token.email != body.email) throw new BadRequestException();
-    const resetToken = req.headers.authorization.split(' ')[1];
+  changeYourPassword(@Body() body: ResetPasswordDto) {
+    //if (req.token.email != body.email) throw new BadRequestException();
+   // const resetToken = req.headers.authorization.split(' ')[1];
     return this.authService.resetPassword(
-      resetToken,
-      req.token.email,
+      body.email,
       body.newPassword,
     );
   }
@@ -94,7 +93,7 @@ export class InvestorController {
 
   @ApiBearerAuth()
   @UseGuards(InvestorGuard)
-  @Get()
+  @Get('investor')
   findAll() {
     return this.investorService.findAll();
   }
