@@ -52,6 +52,12 @@ export class InvestorController {
     return response;
   }
 
+  @Post('/investor/token-subscription/:email')
+  async tokenSubscription(@Param('email') email:string){
+    const response = await this.authService.tokenSubscription(email);
+    return response;
+  }
+
   @Get('get-password-reset-link/:email')
   getPasswordResetLink(@Param('email') email: string) {
     console.log(email);

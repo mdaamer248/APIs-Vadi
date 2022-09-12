@@ -20,7 +20,7 @@ export class Investor {
   @Column()
   password: string;
 
-  @Column()
+  @Column({nullable: true})
   refferalCode: string;
 
   @Column()
@@ -28,6 +28,9 @@ export class Investor {
 
   @Column({default: false})
   isConfirmed: boolean;
+
+  @Column({default: false})
+  isTokenSubscribed: boolean;
 
   @Column({nullable: true})
   validationCode : number;

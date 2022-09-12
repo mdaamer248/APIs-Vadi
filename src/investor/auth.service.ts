@@ -16,6 +16,7 @@ import { JwtPayload } from './interface/jwt-payload.interface';
 import { InvestorProfile } from 'src/investor-profile/entities/investor-profile.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Investor } from './entities/investor.entity';
 
 const scrypt = promisify(_scrypt);
 
@@ -26,7 +27,9 @@ export class AuthService {
     private jwtService: JwtService,
     private mailService: MailService,
     @InjectRepository(InvestorProfile) 
-    private investorProfileRepository: Repository<InvestorProfile>
+    private investorProfileRepository: Repository<InvestorProfile>,
+    @InjectRepository(Investor) 
+    private investorRepository: Repository<Investor>
   ) {}
 
   async signup(createInvestorDto: CreateInvestorDto) {
@@ -100,6 +103,7 @@ export class AuthService {
     const mail = investor.email;
     const id = investor.id;
     const isVerified = investor.isConfirmed;
+    const isTokenSubscribed = investor.isTokenSubscribed;
     if(profile && isVerified == true){
      const isProfileCompleted = profile.isProfileCompleted;
       
@@ -109,16 +113,18 @@ export class AuthService {
          isVerified,
          mail,
          id,
-         isProfileCompleted
-        };
+         isProfileCompleted,
+         isTokenSubscribed
+        }
       }
        else{
         const isProfileCompleted = false;
         return{
-        //access_token: this.jwtService.sign(payload),
+        access_token: this.jwtService.sign(payload),
         message:"Login Success",
         isVerified,
-        isProfileCompleted
+        isProfileCompleted,
+        isTokenSubscribed
          }
       }
   }
@@ -132,12 +138,29 @@ export class AuthService {
     const hash = (await scrypt(password, salt, 32)) as Buffer;
     if (storedHash !== hash.toString('hex')) {
       return {
-        mesage:'Incorrect password'
+        message:'Incorrect password'
       }
       //throw new BadRequestException('Incorrect password');
     }
 
     return { message: 'success '}
+  }
+//update token subscription status
+  async tokenSubscription(email: string){
+    const [investor] = await this.investorService.find(email);
+    if(!investor) return { message: 'No registration found with this Email'}
+    if (investor.isTokenSubscribed == true) {
+      console.log(investor);
+      return {
+        message:'Already subscribed'
+      }
+    } else{
+       investor.isTokenSubscribed = true;
+       await this.investorRepository.save(investor);
+       console.log(investor);
+       return { message: 'subscription success '}
+      } 
+
   }
 
 
