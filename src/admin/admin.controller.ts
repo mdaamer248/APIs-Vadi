@@ -50,8 +50,8 @@ import {
   
     //@ApiBearerAuth()
     //@UseGuards(AdminGuard)
-    @Post('reset-password/:email')
-    changeYourPassword(@Param('email') email:string, @Body() body: ResetPasswordDto) {
+    @Post('reset-password/')
+    changeYourPassword(@Body() body: ResetPasswordDto) {
       //if (req.token.email != body.email) throw new BadRequestException();
       //const resetToken = req.headers.authorization.split(' ')[1];
       return this.authService.resetPassword(
