@@ -79,21 +79,19 @@ import {
       const payload = {email, resetToken, isInvestor: true};
       const access_token = this.jwtService.sign(payload);
   
-      await this.mailService.sendUserPasswordResetEMail(email, access_token);
+      await this.mailService.sendUserPasswordResetEMail(email);
     }
   
   
   
     // Reset the admin's password
-    async resetPassword(resetToken: string, email:string, newPassword: string) {
+    async resetPassword(email:string, newPassword: string) {
       const [admin] = await this.adminService.find(email);
-      if (!admin) throw new HttpException('Investor does not exists.', 404);
+      if (!admin) return { message:'Admin does not exists.'};
       
-      if (admin.resetTokenIssuedAt + 300 < Math.floor(Date.now() / 1000))
-        throw new HttpException('Invalid Token', 400);
-  
-      
-      if (resetToken!= admin.resetToken) throw new BadRequestException();
+      // if (admin.resetTokenIssuedAt + 300 < Math.floor(Date.now() / 1000))
+      //   throw new HttpException('Invalid Token', 400);
+      //if (resetToken!= admin.resetToken) throw new BadRequestException();
   
       const salt = randomBytes(8).toString('hex');
       const hash = (await scrypt(newPassword, salt, 32)) as Buffer;
@@ -101,9 +99,7 @@ import {
       const hashedPassword: string = String(result);
   
       this.adminService.update(admin.id, {newPassword: hashedPassword});
-  
-  
-      return 'Your password has been changed';
+      return { message: 'Your password has been changed'};
     }
   
   }

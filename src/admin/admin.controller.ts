@@ -48,30 +48,29 @@ import {
       return this.authService.sendUserPasswordResetMail(email);
     }
   
-    @ApiBearerAuth()
-    @UseGuards(AdminGuard)
-    @Post('reset-password')
-    changeYourPassword(@Request() req, @Body() body: ResetPasswordDto) {
-      if (req.token.email != body.email) throw new BadRequestException();
-      const resetToken = req.headers.authorization.split(' ')[1];
+    //@ApiBearerAuth()
+    //@UseGuards(AdminGuard)
+    @Post('reset-password/:email')
+    changeYourPassword(@Param('email') email:string, @Body() body: ResetPasswordDto) {
+      //if (req.token.email != body.email) throw new BadRequestException();
+      //const resetToken = req.headers.authorization.split(' ')[1];
       return this.authService.resetPassword(
-        resetToken,
-        req.token.email,
+        body.email,
         body.newPassword,
       );
     }
   
-    @ApiBearerAuth()
-    @UseGuards(AdminGuard)
+    //@ApiBearerAuth()
+    //@UseGuards(AdminGuard)
     @Get()
     findAll() {
       return this.adminService.findAll();
     }
   
-    @Get('get-one/:id')
-    findOne(@Param('id') id: string) {
-      return this.adminService.findOne(+id);
-    }
+    // @Get('get-one/:id')
+    // findOne(@Param('id') id: string) {
+    //   return this.adminService.findOne(+id);
+    // }
 
     @Get('/investorslist')
     findAllInvestors() {
@@ -86,11 +85,11 @@ import {
     //   return this.adminService.update(+id, updateAdminDto);
     // }
   
-    @ApiBearerAuth()
-    @UseGuards(AdminGuard)
-    @Delete('/delete-admin')
-    remove(@Request() req) {
-      return this.adminService.remove(req.token.email);
+    //@ApiBearerAuth()
+    //@UseGuards(AdminGuard)
+    @Delete('/delete-admin/:email')
+    remove(@Param('email') email:string) {
+      return this.adminService.remove(email);
     }
   }
   
