@@ -13,6 +13,7 @@ import { Repository } from 'typeorm';
 import { Admin } from './entities/admin.entity';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { InvestorProfile } from 'src/investor-profile/entities/investor-profile.entity';
+import { Investor } from 'src/investor/entities/investor.entity';
 
 const scrypt = promisify(_scrypt);
 
@@ -23,6 +24,8 @@ export class AdminService {
     private adminRepository: Repository<Admin>,
     @InjectRepository(InvestorProfile) 
     private investorProfileRepository: Repository<InvestorProfile>,
+    @InjectRepository(Investor) 
+    private investorRepository: Repository<Investor>,
   ) {}
 
   // Create the Admin and save it to the repository.
@@ -86,6 +89,16 @@ export class AdminService {
     const [admin] = await this.adminRepository.find({ where: { email } });
      await this.adminRepository.delete(admin.id);
     return admin;
+  }
+//Delete investor
+  async removeInvestor(email: string) {
+    const [investor] = await this.investorRepository.find({ where: { email } });
+    if(investor){
+     await this.investorRepository.delete(investor.id);
+     return { message: "investor deleted successfully"}
+    }else{
+      return { message:"investor not found"}
+    }
   }
   async findAllInvestors() {
     const query = this.investorProfileRepository.createQueryBuilder('pr');

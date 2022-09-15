@@ -71,10 +71,19 @@ import {
     // findOne(@Param('id') id: string) {
     //   return this.adminService.findOne(+id);
     // }
+    // @Post('investor-signup')
+    // async investorSignup(@Body() createInvestorDto: CreateInvestorDto) {
+    //   const investor = await this.authService.signup(createInvestorDto);
+    //   return investor;
+    // }
 
     @Get('/investorslist')
     findAllInvestors() {
       return this.adminService.findAllInvestors();
+    }
+    @Delete('/delete-investor/:email')
+    removeInvestor(@Param('email') email:string) {
+      return this.adminService.removeInvestor(email);
     }
   
     // @Patch(':id')
