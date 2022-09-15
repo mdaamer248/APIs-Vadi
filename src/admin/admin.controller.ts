@@ -18,14 +18,21 @@ import {
   import { UpdateAdminDto } from './dto/update-admin.dto';
   import { LoginAdminDto } from './dto/login-admin.dto';
   import { ResetPasswordDto } from './dto/resetpoasswird.dto';
-  
+  //import { AuthService } from 'src/investor/auth.service';
+  import { CreateInvestorDto } from 'src/investor/dto/create-investor.dto';
+  import { CreateInvestorProfileDto } from 'src/investor-profile/dto/create-investor-profile.dto';
+import { InvestorProfileService } from 'src/investor-profile/investor-profile.service';
+
+
   
   @ApiTags('Admin')
   @Controller('admin')
   export class AdminController {
     constructor(
       private readonly adminService: AdminService,
-      private authService : AuthService
+      private authService : AuthService,
+      private investorProfileService: InvestorProfileService,
+
     ) {}
   
     @Post('auth/signup')
@@ -71,11 +78,17 @@ import {
     // findOne(@Param('id') id: string) {
     //   return this.adminService.findOne(+id);
     // }
-    // @Post('investor-signup')
-    // async investorSignup(@Body() createInvestorDto: CreateInvestorDto) {
-    //   const investor = await this.authService.signup(createInvestorDto);
-    //   return investor;
-    // }
+    @Post('investor-registration')
+    async investorSignup(@Body() createInvestorDto: CreateInvestorDto) {
+      const investor = await this.authService.investorSignup(createInvestorDto);
+      return investor;
+    }
+
+    @Post('create-investor-profile/:email')
+    create(@Body() createInvestorProfileDto: CreateInvestorProfileDto,@Param('email') email: string) {
+    //const email = req.token.email;
+    return this.investorProfileService.create(createInvestorProfileDto,email);
+  }
 
     @Get('/investorslist')
     findAllInvestors() {

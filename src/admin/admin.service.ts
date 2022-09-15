@@ -90,6 +90,21 @@ export class AdminService {
      await this.adminRepository.delete(admin.id);
     return admin;
   }
+
+   //create investor by admin
+   async createInvestor(email: string, password: string,refferalCode: string,role: string) {
+    try {
+      const investor = {email, password, refferalCode, role};
+      const newInvestor = this.investorRepository.create(investor);
+      newInvestor.isConfirmed = true,
+      await this.investorRepository.save(newInvestor);
+      return newInvestor;
+    } catch (err) {
+      console.log('Error creating user', err);
+      throw new InternalServerErrorException();
+    }
+  }
+  
 //Delete investor
   async removeInvestor(email: string) {
     const [investor] = await this.investorRepository.find({ where: { email } });
