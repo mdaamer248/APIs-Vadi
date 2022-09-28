@@ -20,6 +20,9 @@ import { InvestorGuard } from 'src/guards/investor.guard';
 import { OTPDto } from './dto/otp.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { PasswordDto } from './dto/password.dto';
+import { MissingJoinTableError } from 'typeorm';
+import { MobileDto } from './dto/mobile.dto';
+import { SmsOtpDto } from './dto/smsotp.dto';
 
 // @ApiTags('Investor')
 @Controller()
@@ -120,5 +123,14 @@ export class InvestorController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.investorService.remove(+id);
+  }
+  @Post('sendOTP')
+  sendtOTP(@Body() phone: MobileDto) {
+    return this.investorService.sendOTP(phone);
+  }
+
+  @Post('verifySmsOTP')
+  verifyOTP(@Body() data: SmsOtpDto) {
+    return this.investorService.verifyOTP(data.mobile,data.otp);
   }
 }

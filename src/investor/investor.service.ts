@@ -10,12 +10,26 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
+import { User } from './entities/user.entity';
+import { MobileDto } from './dto/mobile.dto';
+import { SmsOtpDto } from './dto/smsotp.dto';
+
+const Vonage = require('@vonage/server-sdk')
 
 @Injectable()
 export class InvestorService {
+  private vonage
   constructor(
     @InjectRepository(Investor)
-    private investorRepository: Repository<Investor>){}
+    private investorRepository: Repository<Investor>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>)
+    {
+    this.vonage = new Vonage({
+    apiKey: "1c636813",
+    apiSecret: "Qjmw04GU0Y0OI1v0"
+    })
+    }
 
   // Create the Investor and save it to the repository.
   async create(email: string, password: string,refferalCode: string,role: string) {
@@ -75,8 +89,44 @@ export class InvestorService {
     return investor;
   }
 
-  
+  async sendOTP(dto:MobileDto):Promise<any>{
+    const { mobile } = dto;
+    const validationCode = Math.floor(Math.random() * 10000);
+    const from = "Vonage APIs"
+    const to = "919866965765"
+    const text = `Your otp ${validationCode} from Vadi`
+    //  const user = { mobile }
+    const data = new User()
+    data.mobile = mobile,
+    data.smsOtp = validationCode
+    //const newUser = this.userRepository.create(user);
+      await this.userRepository.save(data);
 
+    this.vonage.message.sendSms(from, to, text, (err, responseData) => {
+      if (err) {
+        console.log(err);
+      } else {
+        if(responseData.messages[0]['status'] === "0") {
+            console.log("Message sent successfully.");
+            return{ code:200,message:"Otp sent successfully" }
+        } else {
+            console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
+            return{ code:201, message:"Message failed"}
+        }
+      }
+    })
+  }
+
+  async verifyOTP(mobile:number,otp:number) {
+    const user = await this.userRepository.findOne({ where: { mobile } });
+
+     if (user.smsOtp != otp){
+       return {code:201, message: 'Wrong OTP' }
+     }else{
+      return {code:200, message: 'Otp verified'}
+     }
+
+  }
 
   // Find the investor by Email
   find(email: string) {

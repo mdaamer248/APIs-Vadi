@@ -11,11 +11,14 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { join } from 'path';
 import { MailService } from './mail/mail.service';
 import { InvestorProfile } from 'src/investor-profile/entities/investor-profile.entity';
+import { User } from './entities/user.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Investor]),
     TypeOrmModule.forFeature([InvestorProfile]),
+    TypeOrmModule.forFeature([User]),
+
 
     ConfigModule.forRoot({
       envFilePath:'.env',

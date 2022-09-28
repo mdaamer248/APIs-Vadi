@@ -14,6 +14,7 @@ import { InvestorProfile } from 'src/investor-profile/entities/investor-profile.
 import { Investor } from 'src/investor/entities/investor.entity';
 import { InvestorService } from 'src/investor/investor.service';
 import { InvestorProfileService } from 'src/investor-profile/investor-profile.service';
+import { User } from 'src/investor/entities/user.entity';
 
 
 @Module({
@@ -21,7 +22,8 @@ import { InvestorProfileService } from 'src/investor-profile/investor-profile.se
     TypeOrmModule.forFeature([Admin]),
     TypeOrmModule.forFeature([InvestorProfile]),
     TypeOrmModule.forFeature([Investor]),
-    
+    TypeOrmModule.forFeature([User]),
+
 
     ConfigModule.forRoot({
       envFilePath:'.env',
