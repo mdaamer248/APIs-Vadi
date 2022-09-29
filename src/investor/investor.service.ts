@@ -91,7 +91,7 @@ export class InvestorService {
 
   async sendOTP(dto:MobileDto){
     const { mobile } = dto;
-    const validationCode = Math.floor(Math.random() * 1000000);
+    const validationCode = Math.floor(Math.random() * 100000);
     const from = "Vonage APIs"
     const to = "919866965765"
     const text = `Your otp ${validationCode} from Vadi`
