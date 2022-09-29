@@ -89,9 +89,9 @@ export class InvestorService {
     return investor;
   }
 
-  async sendOTP(dto:MobileDto):Promise<any>{
+  async sendOTP(dto:MobileDto){
     const { mobile } = dto;
-    const validationCode = Math.floor(Math.random() * 10000);
+    const validationCode = Math.floor(Math.random() * 1000000);
     const from = "Vonage APIs"
     const to = "919866965765"
     const text = `Your otp ${validationCode} from Vadi`
@@ -101,26 +101,48 @@ export class InvestorService {
     data.smsOtp = validationCode
     //const newUser = this.userRepository.create(user);
       await this.userRepository.save(data);
-
-    this.vonage.message.sendSms(from, to, text, (err, responseData) => {
-      if (err) {
-        console.log(err);
-      } else {
-        if(responseData.messages[0]['status'] === "0") {
-            console.log("Message sent successfully.");
-            return{ code:200,message:"Otp sent successfully" }
+     const result = await this.sendSMS(from, to, text)
+        if (result['code'] === 200) {
+          const message = result['message']
+            return ({ code: 200, message })
         } else {
-            console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
-            return{ code:201, message:"Message failed"}
+            const message = result['message']
+            return ({ code: 201, message })
         }
-      }
-    })
+    // this.vonage.message.sendSms(from, to, text, (err, responseData) => {
+    //   if (err) {
+    //     console.log(err);
+    //   } else {
+    //     if(responseData.messages[0]['status'] === "0") {
+    //         console.log("Message sent successfully.");
+    //         return{ code:200,message:"Otp sent successfully" }
+    //     } else {
+    //         console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
+    //         return{ code:201, message:"Message failed"}
+    //     }
+    //   }
+    // })
   }
 
-  async verifyOTP(mobile:number,otp:number) {
-    const user = await this.userRepository.findOne({ where: { mobile } });
+  sendSMS = (from, to, text) =>
+        new Promise((resolve, reject) => {
+            this.vonage.message.sendSms(from, to, text, { "type": "unicode" }, (err, responseData) => {
+                if (err) {
+                    resolve({ code: 201, message: err })
+                } else {
+                    if (responseData.messages[0]['status'] === "0") {
+                        resolve({ code: 200, message: "Message sent successfully." });
+                    } else {
+                        resolve({ code: 201, message: `Message failed with error: ${responseData.messages[0]['error-text']}` });
+                    }
+                }
+            })
+        })
 
-     if (user.smsOtp != otp){
+  async verifyOTP(mobile:number,otp:number) {
+    const investor = await this.userRepository.findOne({ where: { mobile } });
+
+     if (investor.smsOtp != otp){
        return {code:201, message: 'Wrong OTP' }
      }else{
       return {code:200, message: 'Otp verified'}
