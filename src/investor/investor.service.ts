@@ -29,14 +29,11 @@ export class InvestorService {
    
     {
     this.vonage = new Vonage({
-    //apiKey: process.env.SMS_APIKEY,
-    //apiSecret: process.env.SMS_APISECRET
+    apiKey: process.env.SMS_APIKEY,
+    apiSecret: process.env.SMS_APISECRET
 
     //apiKey: configService.get<string>('SMS_APIKEY'),
     //apiSecret: configService.get<string>('SMS_APISECRET'),
-
-    apiKey:"096bb45d",
-    apiSecret:"j79ak6UnKlo2TpcE"
 
     })
     }
