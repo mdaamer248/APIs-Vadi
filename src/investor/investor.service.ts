@@ -26,8 +26,8 @@ export class InvestorService {
     private userRepository: Repository<User>)
     {
     this.vonage = new Vonage({
-    apiKey: "1c636813",
-    apiSecret: "Qjmw04GU0Y0OI1v0"
+    apiKey: process.env.SMS_APIKEY,
+    apiSecret: process.env.SMS_APISECRET
     })
     }
 
@@ -90,15 +90,18 @@ export class InvestorService {
   }
 
   async sendOTP(dto:MobileDto){
-    const { mobile } = dto;
+    const { dailcode,mobile } = dto;
     const validationCode = Math.floor(Math.random() * 10000);
     const from = "Vonage APIs"
-    const to = "919866965765"
-    const text = `Your otp ${validationCode} from Vadi`
-    //  const user = { mobile }
+    //const dailcode = "91"
+    const number = mobile
+    const code = dailcode
+    const to = `${code}` + number
+    const text = `Your otp from Vadi is ${validationCode}`
     const data = new User()
     data.mobile = mobile,
-    data.smsOtp = validationCode
+    data.smsOtp = validationCode,
+    data.dailCode = code
     //const newUser = this.userRepository.create(user);
       await this.userRepository.save(data);
      const result = await this.sendSMS(from, to, text)

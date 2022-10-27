@@ -125,7 +125,7 @@ export class InvestorController {
     return this.investorService.remove(+id);
   }
   @Post('sendOTP')
-  sendtOTP(@Body() phone: MobileDto) {
+    sendtOTP(@Body() phone: MobileDto) {
     return this.investorService.sendOTP(phone);
   }
 
