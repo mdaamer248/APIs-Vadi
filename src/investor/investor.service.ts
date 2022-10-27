@@ -35,9 +35,9 @@ export class InvestorService {
     //apiKey: configService.get<string>('SMS_APIKEY'),
     //apiSecret: configService.get<string>('SMS_APISECRET'),
 
-    apikey:"096bb45d",
+    apiKey:"096bb45d",
     apiSecret:"j79ak6UnKlo2TpcE"
-    
+
     })
     }
 
