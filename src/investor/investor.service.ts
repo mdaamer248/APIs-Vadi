@@ -13,6 +13,7 @@ import {
 import { User } from './entities/user.entity';
 import { MobileDto } from './dto/mobile.dto';
 import { SmsOtpDto } from './dto/smsotp.dto';
+import { ConfigService } from '@nestjs/config';
 
 const Vonage = require('@vonage/server-sdk')
 
@@ -23,11 +24,16 @@ export class InvestorService {
     @InjectRepository(Investor)
     private investorRepository: Repository<Investor>,
     @InjectRepository(User)
-    private userRepository: Repository<User>)
+    private userRepository: Repository<User>,
+    private configService: ConfigService,)
+   
     {
     this.vonage = new Vonage({
-    apiKey: process.env.SMS_APIKEY,
-    apiSecret: process.env.SMS_APISECRET
+    //apiKey: process.env.SMS_APIKEY,
+    //apiSecret: process.env.SMS_APISECRET
+
+    apiKey: configService.get<string>('SMS_APIKEY'),
+    apiSecret: configService.get<string>('SMS_APISECRET'),
     })
     }
 
