@@ -39,9 +39,9 @@ export class InvestorService {
     }
 
   // Create the Investor and save it to the repository.
-  async create(email: string, password: string,refferalCode: string,role: string) {
+  async create(email: string, password: string) {
     try {
-      const investor = {email, password, refferalCode, role};
+      const investor = {email, password};
       const newInvestor = this.investorRepository.create(investor);
       await this.investorRepository.save(newInvestor);
       return newInvestor;

@@ -13,12 +13,12 @@ export class CreateInvestorDto {
 	@IsString()
 	password: string;
 
-	@ApiProperty()
-	@IsString()
-	refferalCode: string;
+	// @ApiProperty()
+	// @IsString()
+	// refferalCode: string;
 
-	@ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	role: string;
+	// @ApiProperty()
+	// @IsNotEmpty()
+	// @IsString()
+	// role: string;
 }

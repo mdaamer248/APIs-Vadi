@@ -110,7 +110,7 @@ import {
 
     // Investor registration by admin
     async investorSignup(createInvestorDto: CreateInvestorDto) {
-      const {email, password, refferalCode, role } = createInvestorDto;
+      const {email, password} = createInvestorDto;
   
       const [investors] = await this.investorService.find(email);
       if (investors) {
@@ -133,9 +133,7 @@ import {
   
       const investor =  await this.adminService.createInvestor(
         email,
-        hashedPassword,
-        refferalCode,
-        role
+        hashedPassword
       );
       if(investor) {
         //const code = await this.getOTP(investor.email)

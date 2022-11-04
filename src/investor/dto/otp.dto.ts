@@ -15,10 +15,10 @@ export class OTPDto {
 	otp: number;
 
 
-	@ApiProperty()
-	@IsNotEmpty()
-	@IsNumber()
-	timeStamp: number;
+	// @ApiProperty()
+	// @IsNotEmpty()
+	// @IsNumber()
+	// timeStamp: number;
 }
 
 	

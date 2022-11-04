@@ -23,7 +23,7 @@ export class Investor {
   @Column({nullable: true})
   refferalCode: string;
 
-  @Column()
+  @Column({nullable:true})
   role: string;
 
   @Column({default: false})

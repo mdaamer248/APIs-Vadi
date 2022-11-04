@@ -95,8 +95,7 @@ export class InvestorController {
     //console.log(req.token.email);
     return this.authService.submitOTP(
       data.email,
-      data.otp,
-      data.timeStamp,
+      data.otp
     );
   }
 

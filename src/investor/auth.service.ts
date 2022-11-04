@@ -33,18 +33,13 @@ export class AuthService {
   ) {}
 
   async signup(createInvestorDto: CreateInvestorDto) {
-    const {email, password, refferalCode, role } = createInvestorDto;
+    const {email, password} = createInvestorDto;
 
     const [investors] = await this.investorService.find(email);
     if (investors) {
- 
-      if(investors.isConfirmed == true){
       return {
         message: 'Email already in use' 
       }
-     }else{
-      return {message: 'Please verify your Account'}
-     }
       //throw new BadRequestException('Email already in use');
     }
 
@@ -56,9 +51,7 @@ export class AuthService {
 
     const investor =  await this.investorService.create(
       email,
-      hashedPassword,
-      refferalCode,
-      role
+      hashedPassword
     );
     if(investor) {
       const code = await this.getOTP(investor.email)
@@ -102,32 +95,19 @@ export class AuthService {
     const payload = { email: investor.email, isInvestor: true };
     const mail = investor.email;
     const id = investor.id;
-    const isVerified = investor.isConfirmed;
-    const isTokenSubscribed = investor.isTokenSubscribed;
-    if(profile && isVerified == true){
-     const isProfileCompleted = profile.isProfileCompleted;
+    // const isVerified = investor.isConfirmed;
+    // const isTokenSubscribed = investor.isTokenSubscribed;
+    // if(profile && isVerified == true){
+    //  const isProfileCompleted = profile.isProfileCompleted;
       
         return {
          access_token: this.jwtService.sign(payload),
          message:"Login Success",
-         isVerified,
          mail,
-         id,
-         isProfileCompleted,
-         isTokenSubscribed
+         id
         }
-      }
-       else{
-        const isProfileCompleted = false;
-        return{
-        access_token: this.jwtService.sign(payload),
-        message:"Login Success",
-        isVerified,
-        isProfileCompleted,
-        isTokenSubscribed
-         }
-      }
-  }
+ } 
+  
 
 
   // Validate Password
@@ -212,12 +192,13 @@ export class AuthService {
 
 
   // Submit Otp to confirm the Investor's Email address
-  async submitOTP(email: string, otp: number, timeStamp: number) {
+  async submitOTP(email: string, otp: number) {
     const [investor] = await this.investorService.find(email);
 
+    if (!investor) return { message: 'User not found with this Email'}
     if (investor.isConfirmed) return {message: 'Already Verified' }
-    if (investor.otpIssuedAt + 300 < timeStamp)
-      return { message:'Invalid OTP' }
+    // if (investor.otpIssuedAt + 300 < timeStamp)
+    //   return { message:'Invalid OTP' }
 
     if (investor.validationCode != otp)
       return { message: 'Wrong OTP' }

@@ -92,9 +92,9 @@ export class AdminService {
   }
 
    //create investor by admin
-   async createInvestor(email: string, password: string,refferalCode: string,role: string) {
+   async createInvestor(email: string, password: string) {
     try {
-      const investor = {email, password, refferalCode, role};
+      const investor = {email, password};
       const newInvestor = this.investorRepository.create(investor);
       newInvestor.isConfirmed = true,
       await this.investorRepository.save(newInvestor);
