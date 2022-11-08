@@ -132,4 +132,8 @@ export class InvestorController {
   verifyOTP(@Body() data: SmsOtpDto) {
     return this.investorService.verifyOTP(data.mobile,data.otp);
   }
+  @Get('coins/marketdata')
+  coins() {
+    return this.investorService.marketdata();
+  }
 }
