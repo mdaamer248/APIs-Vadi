@@ -95,7 +95,7 @@ export class AuthService {
     const payload = { email: investor.email, isInvestor: true };
     const mail = investor.email;
     const id = investor.id;
-    // const isVerified = investor.isConfirmed;
+    const isVerified = investor.isConfirmed;
     // const isTokenSubscribed = investor.isTokenSubscribed;
     // if(profile && isVerified == true){
     //  const isProfileCompleted = profile.isProfileCompleted;
@@ -103,6 +103,7 @@ export class AuthService {
         return {
          access_token: this.jwtService.sign(payload),
          message:"Login Success",
+         isVerified,
          mail,
          id
         }
