@@ -96,20 +96,23 @@ export class AuthService {
     const mail = investor.email;
     const id = investor.id;
     const isVerified = investor.isConfirmed;
-    // const isTokenSubscribed = investor.isTokenSubscribed;
-    // if(profile && isVerified == true){
-    //  const isProfileCompleted = profile.isProfileCompleted;
-      
-        return {
-         access_token: this.jwtService.sign(payload),
-         message:"Login Success",
-         isVerified,
-         mail,
-         id
-        }
- } 
-  
-
+    const isTokenSubscribed = investor.isTokenSubscribed;
+    if(profile && isVerified == true){
+     var isProfileCompleted = profile.isProfileCompleted;
+    }else{
+      var isProfileCompleted = false;
+    }
+    
+      return {
+        access_token: this.jwtService.sign(payload),
+        message:"Login Success",
+        isVerified,
+        isProfileCompleted,
+        isTokenSubscribed,
+        mail,
+        id
+       }
+  }
 
   // Validate Password
   async validatePassword(email: string, password: string){
