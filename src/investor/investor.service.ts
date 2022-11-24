@@ -198,4 +198,30 @@ export class InvestorService {
       //console.log(result)
     return { message:"success",result}
   }
+
+  async walletMarketdata()
+  {
+    const request = require('request-promise');
+
+    const options = {
+      method: 'GET',
+      uri: 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false',
+      json: true,
+      headers: {
+        'Content-Type': 'application/json',
+        'accept-language': 'EN'
+
+      }
+    }
+
+    var res = await request(options).then(function (response) {
+      return response
+    })
+      .catch(function (err) {
+        return err
+      })
+      var list = ['ETH','SOL','MATIC','BNB'];
+      var result=res.filter(item => list.includes(item.symbol.toUpperCase()))
+    return { message:"success",result}
+  }
 }

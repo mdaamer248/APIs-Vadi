@@ -136,4 +136,9 @@ export class InvestorController {
   coins() {
     return this.investorService.marketdata();
   }
+
+  @Get('wallet-coins/marketdata')
+  walletCoins() {
+    return this.investorService.walletMarketdata();
+  }
 }
