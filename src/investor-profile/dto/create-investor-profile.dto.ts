@@ -1,148 +1,147 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, isNotEmpty, IsString, IsDate, IsNumber, IsOptional, IsEmpty} from "class-validator";
-
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsEmail,
+  IsNotEmpty,
+  isNotEmpty,
+  IsString,
+  IsDate,
+  IsNumber,
+  IsOptional,
+  IsEmpty,
+} from 'class-validator';
 
 export class CreateInvestorProfileDto {
+  // @ApiProperty()
+  // @IsEmpty()
+  // userId: number;
 
-	// @ApiProperty()
-	// @IsEmpty()
-	// userId: number;
+  @ApiProperty()
+  @IsNotEmpty()
+  range: string;
 
-	@ApiProperty()
-	@IsNotEmpty()
-	range: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  lower: number;
 
-	@ApiProperty()
-	@IsNotEmpty()
-	lower: number;
+  @ApiProperty()
+  @IsNotEmpty()
+  upper: number;
 
-	@ApiProperty()
-	@IsNotEmpty()
-	upper: number;
+  // @IsNotEmpty()
+  // @ApiProperty()
+  // @IsNotEmpty()
+  // email: string;
 
-	// @IsNotEmpty()
-	// @ApiProperty()
-	// @IsNotEmpty()
-	// email: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  fundAmount: number;
 
-	@ApiProperty()
-	@IsNotEmpty()
-	fundAmount: number;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  firstName: string;
 
-    @ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	firstName: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  lastName: string;
 
-    @ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	lastName: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  fullName: string;
 
-	@ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	fullName: string;
-
-	@ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	dateOfBirth: Date;
-
-    @ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	countryOfBirth: string;
-
-    @ApiProperty()
-	@IsNotEmpty()
-	countryCode: number;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  dateOfBirth: Date;
 
 
-    @ApiProperty()
-	@IsOptional()
-	@IsNumber()
-	cURP: number;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  countryOfBirth: string;
 
+  @ApiProperty()
+  @IsNotEmpty()
+  countryCode: number;
 
-    @ApiProperty()
-	@IsOptional()
-	@IsNumber()
-	rFC: number;
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  cURP: number;
 
-    @ApiProperty()
-	@IsNotEmpty()
-	@IsNumber()
-	phoneNumber: number;
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  rFC: number;
 
-	@ApiProperty()
-	@IsNotEmpty()
-	@IsNumber()
-	tax: number;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  phoneNumber: number;
 
-    @ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	occupation: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  tax: number;
 
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  occupation: string;
 
-    @ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	nationality: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  nationality: string;
 
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  street: string;
 
-    @ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	street: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  exterior: string;
 
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  interior: string;
 
-    @ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	exterior: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  postalCode: number;
 
-    @ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	interior: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  colony: string;
 
-    @ApiProperty()
-	@IsNotEmpty()
-	@IsNumber()
-	postalCode: number;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  muncipiality: string;
 
-    @ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	colony: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  state: string;
 
-    @ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	muncipiality: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  documentNo: string;
 
-    @ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	state: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  isGeo: string;
 
-	@ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	documentNo: string;
-
-	@ApiProperty()
-	@IsNotEmpty()
-	@IsString()
-	isGeo: string;
-
-	@ApiProperty()
-	@IsNotEmpty()
-	isProfileCompleted: boolean;
-
-
-
-
+  @ApiProperty()
+  @IsNotEmpty()
+  isProfileCompleted: boolean;
 }

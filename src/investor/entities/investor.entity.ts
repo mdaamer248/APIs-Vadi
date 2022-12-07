@@ -1,6 +1,10 @@
+import { InvestorProfile } from 'src/investor-profile/entities/investor-profile.entity';
+import { Wallet } from 'src/wallet/entities/wallet.entity';
 import {
     Column,
     Entity,
+    JoinColumn,
+    OneToOne,
     PrimaryGeneratedColumn,
     Unique
   } from 'typeorm';
@@ -43,4 +47,12 @@ export class Investor {
 
   @Column({nullable: true})
   resetTokenIssuedAt : number;
+
+  @OneToOne(() => Wallet, (wallet) => wallet.investor )
+  @JoinColumn()
+  wallet : Wallet;
+
+  @OneToOne(() => InvestorProfile, (investorProfile) => investorProfile.investor )
+  @JoinColumn()
+  investorProfile : InvestorProfile;
 }

@@ -5,23 +5,24 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { InvestorProfile } from './entities/investor-profile.entity';
 import { Investor } from 'src/investor/entities/investor.entity';
+import { InvestorService } from 'src/investor/investor.service';
 
 @Injectable()
 export class InvestorProfileService {
 
   constructor(@InjectRepository(InvestorProfile) private investorProfileRepository: Repository<InvestorProfile>,
-  @InjectRepository(Investor)
-    private investorRepository: Repository<Investor>
+    private investorService: InvestorService
     ){}
 
   async create(createInvestorProfileDto: CreateInvestorProfileDto, email: string) {
     //createInvestorProfileDto.email = email;
-    const [investor] = await this.investorRepository.find({where:{email}});
+    const investor = await this.investorService.findByEmail(email);
     const [profile] = await this.investorProfileRepository.find({where:{email}});
     if(!investor){ return {message:'No registration found with this Email'}}
      if(!profile){ 
   
-       const investorProfile = await this.investorProfileRepository.create(createInvestorProfileDto);
+      const prof = {investor,...createInvestorProfileDto}
+       const investorProfile = await this.investorProfileRepository.create(prof);
        investorProfile.email = email;
        await this.investorProfileRepository.save(investorProfile);
        return {
@@ -78,16 +79,25 @@ export class InvestorProfileService {
   }
 
   async findOne(email: string) {
-    const [investorProfile] = await this.investorProfileRepository.find({where:{email}})
-    if(!investorProfile) throw new HttpException("Pofile Not Found",404);
+    const investorProfile = await this.getProfileByEmail(email);
     return investorProfile;
   }
 
-  update(id: number, updateInvestorProfileDto: UpdateInvestorProfileDto) {
-    return `This action updates a #${id} investorProfile`;
+
+  // Find by Email
+  async findByEmail(email: string ){
+    const investorProfile = await this.getProfileByEmail(email);
+    return investorProfile;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} investorProfile`;
+   ////// Get wallet by Email
+   async getProfileByEmail(email: string) {
+    const wallets = await this.investorProfileRepository.find({relations:['investor']});
+    const investorEmail = email;
+    let wallet ;
+    wallets.forEach((wall) => {
+      if(wall.investor && wall.investor.email == investorEmail) wallet = wall;
+    })
+    return wallet;
   }
 }

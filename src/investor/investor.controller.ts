@@ -106,6 +106,13 @@ export class InvestorController {
     return this.investorService.findAll();
   }
 
+  @ApiBearerAuth()
+  @UseGuards(InvestorGuard)
+  @Get('investorByEmail')
+  findByEmail(@Request() req) {
+    return this.investorService.findByEmail(req.token.email)
+  }
+
   @Get('get-one/:id')
   findOne(@Param('id') id: string) {
     return this.investorService.findOne(+id);
@@ -140,5 +147,11 @@ export class InvestorController {
   @Get('wallet-coins/marketdata')
   walletCoins() {
     return this.investorService.walletMarketdata();
+  }
+
+  @Get('inv/:email')
+  async getInvestorByEmail(@Param('email') email: string){
+    const investor = await this.investorService.findByEmail(email);
+    return investor;
   }
 }

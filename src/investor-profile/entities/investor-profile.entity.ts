@@ -1,6 +1,9 @@
+import { Investor } from 'src/investor/entities/investor.entity';
 import {
     Column,
     Entity,
+    JoinColumn,
+    OneToOne,
     PrimaryGeneratedColumn,
     Unique
 } from 'typeorm';
@@ -107,4 +110,8 @@ export class InvestorProfile {
 
   @Column({default: false})
   isProfileCompleted: boolean;
+
+  @OneToOne(() => Investor, (investor) => investor.investorProfile )
+  @JoinColumn()
+  investor: Investor;
 }

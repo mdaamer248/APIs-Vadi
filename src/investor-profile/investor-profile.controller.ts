@@ -144,17 +144,4 @@ export class InvestorProfileController {
   getByEmail(@Body() data: GetByEmailDto) {
     return this.investorProfileService.findOne(data.email);
   }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateInvestorProfileDto: UpdateInvestorProfileDto,
-  ) {
-    return this.investorProfileService.update(+id, updateInvestorProfileDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.investorProfileService.remove(+id);
-  }
 }

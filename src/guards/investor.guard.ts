@@ -27,7 +27,7 @@ import {
       }
       const token = auth.split(' ')[1];
       try {
-        const decoded = jwt.verify(token,process.env.JWT_SECRET);
+        const decoded = jwt.verify(token,'HI There!');
         // console.log(decoded);
         return decoded;
       } catch (err) {
