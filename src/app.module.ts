@@ -8,6 +8,7 @@ import { InvestorProfileModule } from './investor-profile/investor-profile.modul
 import { AdminModule } from './admin/admin.module';
 import { WalletModule } from './wallet/wallet.module';
 import { JwtModule } from '@nestjs/jwt';
+import { PaymentModule } from './payment/payment.module';
 
 
 @Module({
@@ -18,6 +19,7 @@ import { JwtModule } from '@nestjs/jwt';
     InvestorProfileModule,
     AdminModule,
     WalletModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

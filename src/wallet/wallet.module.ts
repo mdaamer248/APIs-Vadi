@@ -40,5 +40,6 @@ import { Wallet } from './entities/wallet.entity';
     MtcService,
     VdcService,
   ],
+  exports:[VdcService]
 })
 export class WalletModule {}
