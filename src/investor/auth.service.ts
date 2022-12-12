@@ -189,7 +189,7 @@ export class AuthService {
 
   // Get Otp for verifying Email address of investor
   async getOTP(email:string){
-    const validationCode = Math.floor(Math.random() * 1000000);
+    const validationCode = Math.floor((Math.random() * (999999 - 100000 + 1)) + 100000);
     return this.mailService.sendUserConfirmationMail(email, validationCode);
   }
 
