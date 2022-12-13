@@ -18,6 +18,16 @@ export class UpdateInvestorDto  {
   newEmail?: string;
 
   @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  profileImg?: string;
+
+  @ApiProperty({ required: false})
+  @IsNumber()
+  @IsOptional()
+  phone?: number;
+
+  @ApiProperty({ required: false })
   @IsNumber()
   @IsOptional()
   newValidationCode?: number;
@@ -27,10 +37,10 @@ export class UpdateInvestorDto  {
   @IsOptional()
   newOtpIssuedAt?: number;
 
-  @ApiProperty({ required: false })
-  @IsString()
-  @IsOptional()
-  newResetToken?: string;
+  // @ApiProperty({ required: false })
+  // @IsString()
+  // @IsOptional()
+  // newResetToken?: string;
 
   @ApiProperty({ required: false })
   @IsNumber()
@@ -41,4 +51,6 @@ export class UpdateInvestorDto  {
   @IsBoolean()
   @IsOptional()
   newIsConfirmed?: boolean;
+
+
 }

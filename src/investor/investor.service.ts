@@ -59,9 +59,10 @@ export class InvestorService {
       newPassword,
       newEmail,
       newUserName,
+      profileImg,
+      phone,
       newValidationCode,
       newOtpIssuedAt,
-      newResetToken,
       newResetTokenIssuedAt,
       newIsConfirmed
     } = updateInvestorDto;
@@ -71,15 +72,18 @@ export class InvestorService {
 
     if (newPassword) investor.password = newPassword;
     if (newEmail) investor.email = newEmail;
-    //if (newUserName) investor.userName = newUserName;
+    if (newUserName) investor.userName = newUserName;
     if (newValidationCode) investor.validationCode = newValidationCode;
+    if (profileImg) investor.profileImg = profileImg;
+    if (phone) investor.phone = phone;
+
     if (newOtpIssuedAt) investor.otpIssuedAt = newOtpIssuedAt;
-    if (newResetToken)  investor.resetToken = newResetToken;
+    //if (newResetToken)  investor.resetToken = newResetToken;
     if (newResetTokenIssuedAt) investor.resetTokenIssuedAt = newResetTokenIssuedAt;
     if (newIsConfirmed) investor.isConfirmed = true;
 
     await this.investorRepository.save(investor);
-    return `User ${investor.email} has been updated!`;
+    return { statuscode:200 ,message: "User has been updated!"};
   }
 
 

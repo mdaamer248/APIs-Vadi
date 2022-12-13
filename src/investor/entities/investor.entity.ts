@@ -43,4 +43,10 @@ export class Investor {
 
   @Column({nullable: true})
   resetTokenIssuedAt : number;
+
+  @Column({nullable: true})
+  profileImg : string;
+
+  @Column({nullable: true,type:"bigint"})
+  phone : number;
 }

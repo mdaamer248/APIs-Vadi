@@ -101,7 +101,7 @@ export class InvestorController {
 
   @ApiBearerAuth()
   @UseGuards(InvestorGuard)
-  @Get('investor')
+  @Get('investors')
   findAll() {
     return this.investorService.findAll();
   }
@@ -111,7 +111,7 @@ export class InvestorController {
     return this.investorService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Patch('update-investor/:id')
   update(
     @Param('id') id: string,
     @Body() updateInvestorDto: UpdateInvestorDto,
