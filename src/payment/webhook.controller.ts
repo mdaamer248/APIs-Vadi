@@ -1,13 +1,40 @@
-import { Controller, Post, HttpCode, HttpStatus, Header, Body, Request} from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  HttpCode,
+  HttpStatus,
+  Header,
+  Body,
+  Request,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { WebHookService } from './webhook.service';
 
 @ApiTags('Hook')
 @Controller('webhook')
 export class WebhookController {
-    constructor(private webHookService: WebHookService){}
+  constructor(private webHookService: WebHookService) {}
   @Post('/order/completion')
   @HttpCode(200)
+  handleWebhook(@Body() body: any) {
+    // return this.webHookService.orderCompletionStatus(transmissionId, body, signature);
+    let orderId;
+    let orderAmount;
+    let orderCurrency;
+    if (body.event_type == 'PAYMENT.CAPTURE.COMPLETED') {
+      console.log("OrderId :- ",body.resource.supplementary_data);
+      orderId = body.resource.supplementary_data.related_ids.order_id;
+      orderAmount = body.resource.amount.value;
+      orderCurrency = body.resource.amount.currency_code;
+
+      console.log(
+        `Order ${orderId} for amount ${orderAmount} ${orderCurrency} completed`,
+      );
+    }
+
+  }
+
+  //////////// Verify Signatures
   //  handleWebhook(
   //   @Header('paypal-transmission-id','tranmissionId') transmissionId: string,
   //   @Body() body: any,
@@ -15,10 +42,4 @@ export class WebhookController {
   // ) {
   //   return this.webHookService.orderCompletionStatus(transmissionId, body, signature);
   // }
-  handleWebhook(@Request() req, @Body() body: any) {
-    // return this.webHookService.orderCompletionStatus(transmissionId, body, signature);
-    console.log(req)
-
-  }
-    
 }
