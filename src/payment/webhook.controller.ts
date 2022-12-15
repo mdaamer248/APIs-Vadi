@@ -21,8 +21,11 @@ export class WebhookController {
     let orderId;
     let orderAmount;
     let orderCurrency;
+
+    if (body.event_type == 'CHECKOUT.ORDER.COMPLETED'){
+      return this.webHookService.checkoutOrderCompletion(body);
+    }
     if (body.event_type == 'PAYMENT.CAPTURE.COMPLETED') {
-      console.log("OrderId :- ",body.resource.supplementary_data);
       orderId = body.resource.supplementary_data.related_ids.order_id;
       orderAmount = body.resource.amount.value;
       orderCurrency = body.resource.amount.currency_code;

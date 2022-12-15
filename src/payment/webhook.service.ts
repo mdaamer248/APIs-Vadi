@@ -62,4 +62,24 @@ export class WebHookService {
       `Order ${orderId} for amount ${orderAmount} ${orderCurrency} completed`,
     );
   }
+
+  //// Checkout order completion status
+  checkoutOrderCompletion(body: any) {
+    const gross_amount = body.resource.gross_amount.value;
+    const net_amount =
+      body.resource.purchase_units[0].payments.captures[0]
+        .seller_receivable_breakdown.net_amount.value;
+    const currency_code = body.resource.gross_amount.currency_code;
+    const payer_name =
+      body.resource.payer.name.given_name +
+      '' +
+      body.resource.payer.name.surname;
+
+    const email = body.resource.payer.email_address;
+    const status = body.resource.status;
+
+    console.log(
+      `${payer_name} is the payer with email ${email}. ${gross_amount} is the gross amount and ${net_amount} is the net amount ${currency_code}. The status of transaction is ${status}`,
+    );
+  }
 }

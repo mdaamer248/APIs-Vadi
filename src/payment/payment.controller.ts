@@ -13,7 +13,7 @@ import { PaymentService } from './payment.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { APP_FILTER } from '@nestjs/core';
 import { InvestorGuard } from 'src/guards/investor.guard';
-import { CreatePaymentDto } from './dto/create-payment.dto';
+import { MakePaymentDto } from './dto/make-payment.dto';
 
 @ApiTags('Payment')
 @Controller('payment')
@@ -23,7 +23,7 @@ export class PaymentController {
   @ApiBearerAuth()
   @UseGuards(InvestorGuard)
   @Post('/create/order')
-  async create(@Body() payment: CreatePaymentDto) {
+  async create(@Body() payment: MakePaymentDto) {
   const orderId = await this.paymentService.createOrder(payment.amount);
     return orderId;
   }
@@ -34,5 +34,11 @@ export class PaymentController {
   async captureOrder(@Request() req, @Param('orderID') orderID: string) {
     const tsx = await this.paymentService.capturePayment(orderID,req.token.email);
     return tsx;
+  }
+
+  @Get('get-all-payments')
+  async getAllpayments(){
+    const payments = await this.paymentService.getAllPayments();
+    return payments;
   }
 }
