@@ -7,7 +7,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const port = process.env.PORT || 4000;
+  const port = process.env.PORT || 4004;
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -19,7 +19,7 @@ async function bootstrap() {
     }),
   );
   app.enableCors();
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('pay');
 
   const options = new DocumentBuilder()
     .setTitle('Vadi-BackEnd')
@@ -29,10 +29,10 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, options);
 
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('pay', app, document);
 
   await app.listen(port);
-  Logger.log(`🚀 Application is running on: http://localhost:${port}/api`);
+  Logger.log(`🚀 Application is running on: http://localhost:${port}/pay`);
 }
 
 bootstrap();
