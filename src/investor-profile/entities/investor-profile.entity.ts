@@ -60,7 +60,7 @@ export class InvestorProfile {
   @Column({type: "bigint"})
   phoneNumber: number;
 
-  @Column()
+  @Column({nullable: true})
   tax: string;
 
   @Column()
