@@ -52,16 +52,16 @@ export class InvestorProfile {
   countryCode: number;
 
   @Column({nullable: true})
-  cURP: number;
+  cURP: string;
 
   @Column({ nullable: true})
-  rFC: number;
+  rFC: string;
 
   @Column({type: "bigint"})
   phoneNumber: number;
 
   @Column()
-  tax: number;
+  tax: string;
 
   @Column()
   occupation: string;

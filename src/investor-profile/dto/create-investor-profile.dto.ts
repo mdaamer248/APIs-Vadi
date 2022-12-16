@@ -61,14 +61,14 @@ export class CreateInvestorProfileDto {
 
     @ApiProperty()
 	@IsOptional()
-	@IsNumber()
-	cURP: number;
+	@IsString()
+	cURP: string;
 
 
     @ApiProperty()
 	@IsOptional()
-	@IsNumber()
-	rFC: number;
+	@IsString()
+	rFC: string;
 
     @ApiProperty()
 	@IsNotEmpty()
@@ -77,8 +77,8 @@ export class CreateInvestorProfileDto {
 
 	@ApiProperty()
 	@IsNotEmpty()
-	@IsNumber()
-	tax: number;
+	@IsString()
+	tax: string;
 
     @ApiProperty()
 	@IsNotEmpty()
