@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InvestorService } from 'src/investor/investor.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
@@ -19,7 +19,7 @@ export class PaymentService {
   ) {}
 
   //////////////////////////  use the orders api to create an order //////////////////////////
-  async createOrder(amount: string) {
+  async createOrder(amount: string, user_email: string) {
     const accessToken = await this.generateAccessToken();
     const url = `${this.configService.get<string>('BASE')}/v2/checkout/orders`;
     const body = JSON.stringify({
@@ -51,6 +51,7 @@ export class PaymentService {
       })
       .catch((error) => console.log(error.res.data));
 
+    const payment = await this.createPayment({ order_id: orderID, user_email });
 
     return { orderID };
   }
@@ -108,23 +109,38 @@ export class PaymentService {
     return access_token;
   }
 
-
-
-
   ///////// Repository Methods
 
   // Create Payments
-  async createPayment(createPaymentDto: CreatePaymentDto){
+  async createPayment(createPaymentDto: CreatePaymentDto) {
     const payment = await this.paymentRepository.create(createPaymentDto);
     await this.paymentRepository.save(payment);
     return payment;
   }
 
+  // Get payment info by order_id
+  async getPaymentByOrderId(order_id: string) {
+    const [paymentInfo] = await this.paymentRepository.find({
+      where: { order_id },
+    });
+    return paymentInfo;
+  }
 
   // Fetch all payment methods
-  async getAllPayments(){
+  async getAllPayments() {
     const payments = await this.paymentRepository.find();
     return payments;
   }
 
+  async updatePayment(updatePaymentDto: UpdatePaymentDto) {
+    const payment = await this.getPaymentByOrderId(updatePaymentDto.order_id);
+    if (!payment) throw new NotFoundException('Payment does not exists');
+    const keys = Object.keys(updatePaymentDto);
+    keys.forEach((key) => {
+      payment[key] = updatePaymentDto[key];
+    });
+
+    await this.paymentRepository.save(payment);
+    return payment;
+  }
 }

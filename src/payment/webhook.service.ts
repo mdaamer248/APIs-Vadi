@@ -1,34 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InvestorService } from 'src/investor/investor.service';
 import * as crypto from 'crypto';
+import { PaymentService } from './payment.service';
 
 @Injectable()
 export class WebHookService {
-  constructor(private investoService: InvestorService) {}
-
-  orderCompletionStatus(transmissionId: string, body: any, signature: string) {
-    const isVerified = this.verifySignature(transmissionId, body, signature);
-    let orderId;
-    let orderAmount;
-    let orderCurrency;
-    if (isVerified) {
-      // Handle the webhook
-      const eventType = body.event_type;
-      if (eventType === 'PAYMENT.SALE.COMPLETED') {
-        // Get the order details from the webhook payload
-        orderId = body.resource.parent_payment;
-        orderAmount = body.resource.amount.total;
-        orderCurrency = body.resource.amount.currency;
-
-        // Process the order completion
-        this.processOrderCompletion(orderId, orderAmount, orderCurrency);
-      }
-    } else {
-      // Send an error response to PayPal
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-    }
-    return { orderId, orderAmount };
-  }
+  constructor(
+    private investoService: InvestorService,
+    private paymentService: PaymentService,
+  ) {}
 
   verifySignature(transmissionId: string, body: any, signature: string) {
     // Verify that the webhook is from PayPal
@@ -52,34 +32,44 @@ export class WebHookService {
     return isVerified;
   }
 
-  processOrderCompletion(
-    orderId: string,
-    orderAmount: number,
-    orderCurrency: string,
-  ) {
-    // Do something with the order details
-    console.log(
-      `Order ${orderId} for amount ${orderAmount} ${orderCurrency} completed`,
-    );
-  }
-
-  //// Checkout order completion status
-  checkoutOrderCompletion(body: any) {
-    const gross_amount = body.resource.gross_amount.value;
-    const net_amount =
-      body.resource.purchase_units[0].payments.captures[0]
-        .seller_receivable_breakdown.net_amount.value;
-    const currency_code = body.resource.gross_amount.currency_code;
-    const payer_name =
+  //// Checkout order approved status
+  async checkoutOrderApproved(body: any) {
+    const order_id: string = body.resource.id;
+    const payer_name: string =
       body.resource.payer.name.given_name +
-      '' +
+      ' ' +
       body.resource.payer.name.surname;
 
-    const email = body.resource.payer.email_address;
-    const status = body.resource.status;
+    const payer_email: string = body.resource.payer.email_address;
+    const status: boolean = body.resource.status;
+    await this.paymentService.updatePayment({
+      order_id,
+      payer_email,
+      payer_name,
+      status,
+    });
 
-    console.log(
-      `${payer_name} is the payer with email ${email}. ${gross_amount} is the gross amount and ${net_amount} is the net amount ${currency_code}. The status of transaction is ${status}`,
-    );
+    return 'Payment has been updated';
+  }
+
+  //// Payment Capture
+  async paymentCaptureCompleted(body: any) {
+    const order_id = body.resource.supplementary_data.related_ids.order_id;
+    const currency = body.resource.amount.currency_code;
+    const gross_amount =
+      body.resource.seller_receivable_breakdown.gross_amount.value;
+    const net_amount =
+      body.resource.seller_receivable_breakdown.net_amount.value;
+    const paypal_fee =
+      body.resource.seller_receivable_breakdown.paypal_fee.value;
+
+    await this.paymentService.updatePayment({
+      order_id,
+      currency,
+      gross_amount,
+      net_amount,
+      paypal_fee,
+    });
+    return 'Payment has been updated';
   }
 }

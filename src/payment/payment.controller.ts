@@ -23,8 +23,8 @@ export class PaymentController {
   @ApiBearerAuth()
   @UseGuards(InvestorGuard)
   @Post('/create/order')
-  async create(@Body() payment: MakePaymentDto) {
-  const orderId = await this.paymentService.createOrder(payment.amount);
+  async create(@Request() req,@Body() payment: MakePaymentDto) {
+  const orderId = await this.paymentService.createOrder(payment.amount, req.token.email);
     return orderId;
   }
 

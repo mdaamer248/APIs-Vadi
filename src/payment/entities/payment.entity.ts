@@ -7,24 +7,33 @@ export class Payment {
   @Column()
   order_id: string;
 
-  @Column()
+  @Column({nullable: true})
   payer_name: string;
 
-  @Column()
+  @Column({nullable: true})
   payer_email: string;
 
-  @Column()
+  @Column({nullable: true})
+  user_email: string;
+
+  @Column({nullable: true})
   gross_amount: number;
 
-  @Column()
+  @Column({nullable: true})
   net_amount: number;
 
-  @Column()
+  @Column({nullable: true})
+  paypal_fee: number;
+
+  @Column({nullable: true})
+  currency: string;
+
+  @Column({nullable: true})
   status: boolean;
 
-  @Column()
+  @Column({nullable: true})
   tokens_amount: number;
 
-  @Column()
+  @Column({nullable: true})
   tokens_transfered: boolean;
 }

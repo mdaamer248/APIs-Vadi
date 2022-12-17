@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreatePaymentDto {
   @ApiProperty()
@@ -8,37 +15,52 @@ export class CreatePaymentDto {
   order_id: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  payer_name: string;
+  payer_name?: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsEmail()
-  payer_email: string;
+  payer_email?: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
+  @IsEmail()
+  user_email?: string;
+
+  @ApiProperty()
+  @IsOptional()
   @IsNumber()
-  gross_amount: number;
+  gross_amount?: number;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
-  net_amount: number;
+  net_amount?: number;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
+  @IsNumber()
+  paypal_fee?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  currency?: string;
+
+  @ApiProperty()
+  @IsOptional()
   @IsBoolean()
-  status: boolean;
+  status?: boolean;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
-  tokens_amount: number;
+  tokens_amount?: number;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsBoolean()
-  tokens_transfered: boolean;
+  tokens_transfered?: boolean;
 }
