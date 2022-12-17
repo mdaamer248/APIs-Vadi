@@ -18,13 +18,13 @@ export class Pay {
   user_email: string;
 
   @Column({nullable: true})
-  gross_amount: number;
+  gross_amount: string;
 
   @Column({nullable: true})
-  net_amount: number;
+  net_amount: string;
 
   @Column({nullable: true})
-  paypal_fee: number;
+  paypal_fee: string;
 
   @Column({nullable: true})
   currency: string;

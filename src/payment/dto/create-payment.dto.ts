@@ -32,17 +32,17 @@ export class CreatePaymentDto {
   @ApiProperty()
   @IsOptional()
   @IsNumber()
-  gross_amount?: number;
+  gross_amount?: string;
 
   @ApiProperty()
   @IsOptional()
   @IsNumber()
-  net_amount?: number;
+  net_amount?: string;
 
   @ApiProperty()
   @IsOptional()
   @IsNumber()
-  paypal_fee?: number;
+  paypal_fee?: string;
 
   @ApiProperty()
   @IsOptional()
