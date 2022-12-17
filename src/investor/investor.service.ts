@@ -16,6 +16,7 @@ import { SmsOtpDto } from './dto/smsotp.dto';
 import { ConfigService } from '@nestjs/config';
 import { In } from "typeorm";
 import { count } from 'rxjs';
+import { stringify } from 'querystring';
 
 const Vonage = require('@vonage/server-sdk')
 
@@ -228,4 +229,34 @@ export class InvestorService {
       var result=res.filter(item => list.includes(item.symbol.toUpperCase()))
     return { message:"success",result}
   }
+
+  async Marketdatagraph(id:string)
+  {
+    const request = require('request-promise');
+
+    const options = {
+      method: 'GET',
+      uri: `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${id}&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1h%2C24h%2C7d%2C14d%2C30d%2C200d`,
+      json: true,
+      headers: {
+        'Content-Type': 'application/json',
+        'accept-language': 'EN'
+
+      }
+    }
+
+    var res = await request(options).then(function (response) {
+      //console.log(response)
+      //var myJsonString = JSON.stringify(response);
+      //console.log(myJsonString)
+    
+      return response
+    })
+      .catch(function (err) {
+        return err
+      })
+    // var info = res.concat("description= 'test'")
+    //    var infoo = Object.assign({},res,{property: "test"})
+    return res
+      }
 }

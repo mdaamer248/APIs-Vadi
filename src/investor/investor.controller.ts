@@ -9,6 +9,7 @@ import {
   UseGuards,
   Request,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import { InvestorService } from './investor.service';
 import { AuthService } from './auth.service';
@@ -140,5 +141,10 @@ export class InvestorController {
   @Get('wallet-coins/marketdata')
   walletCoins() {
     return this.investorService.walletMarketdata();
+  }
+
+  @Get('coins/marketdatagraph')
+  wCoins(@Query('id') id: string)  {
+    return this.investorService.Marketdatagraph(id);
   }
 }
