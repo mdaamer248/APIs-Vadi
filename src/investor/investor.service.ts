@@ -247,8 +247,8 @@ export class InvestorService {
 
     var res = await request(options).then(function (response) {
       //console.log(response)
-      //var myJsonString = JSON.stringify(response);
-      //console.log(myJsonString)
+      var myJsonString = JSON.stringify(response);
+      
     
       return response
     })
@@ -258,5 +258,33 @@ export class InvestorService {
     // var info = res.concat("description= 'test'")
     //    var infoo = Object.assign({},res,{property: "test"})
     return res
+      }
+
+      async pricegraph(id:string,from,to)
+  {
+    const request = require('request-promise');
+
+    const options = {
+      method: 'GET',
+      uri: `https://api.coingecko.com/api/v3/coins/${id}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`,
+      json: true,
+      headers: {
+        'Content-Type': 'application/json',
+        'accept-language': 'EN'
+
+      }
+    }
+
+    var res = await request(options).then(function (response) {
+      //console.log(response)
+      var myJsonString = JSON.stringify(response);
+      
+    
+      return response
+    })
+      .catch(function (err) {
+        return err
+      })
+    return {prices: res.prices}
       }
 }

@@ -24,6 +24,7 @@ import { PasswordDto } from './dto/password.dto';
 import { MissingJoinTableError } from 'typeorm';
 import { MobileDto } from './dto/mobile.dto';
 import { SmsOtpDto } from './dto/smsotp.dto';
+import path from 'path';
 
 // @ApiTags('Investor')
 @Controller()
@@ -146,5 +147,13 @@ export class InvestorController {
   @Get('coins/marketdatagraph')
   wCoins(@Query('id') id: string)  {
     return this.investorService.Marketdatagraph(id);
+  }
+
+  @Get('coins/pricegraph')
+  graph(@Query('id') id: string,
+  @Query('from') from: string,
+  @Query('to') to: string
+  )  {
+    return this.investorService.pricegraph(id,from,to);
   }
 }
