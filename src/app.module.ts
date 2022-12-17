@@ -10,7 +10,6 @@ import { WalletModule } from './wallet/wallet.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PaymentModule } from './payment/payment.module';
 
-
 @Module({
   imports: [
     InvestorModule,
@@ -20,7 +19,6 @@ import { PaymentModule } from './payment/payment.module';
     AdminModule,
     WalletModule,
     PaymentModule,
-    
   ],
   controllers: [AppController],
   providers: [AppService],
