@@ -5,14 +5,14 @@ import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import axios from 'axios';
 import { VdcService } from 'src/wallet/blockChains/vadiCoin/vadicoin.service';
-import { Payment } from './entities/payment.entity';
+import { Pay} from './entities/payment.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class PaymentService {
   constructor(
-    @InjectRepository(Payment) private paymentRepository: Repository<Payment>,
+    @InjectRepository(Pay) private paymentRepository: Repository<Pay>,
     private investorService: InvestorService,
     private configService: ConfigService,
     private vdcService: VdcService,

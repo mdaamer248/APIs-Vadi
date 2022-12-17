@@ -5,11 +5,11 @@ import { InvestorModule } from 'src/investor/investor.module';
 import { WalletModule } from 'src/wallet/wallet.module';
 import { WebHookService } from './webhook.service';
 import { WebhookController } from './webhook.controller';
-import { Payment } from './entities/payment.entity';
+import { Pay } from './entities/payment.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Payment]), InvestorModule, WalletModule],
+  imports: [TypeOrmModule.forFeature([Pay]), InvestorModule, WalletModule],
   controllers: [PaymentController, WebhookController],
   providers: [PaymentService, WebHookService],
 })
