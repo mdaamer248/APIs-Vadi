@@ -41,7 +41,7 @@ export class WebHookService {
       body.resource.payer.name.surname;
 
     const payer_email: string = body.resource.payer.email_address;
-    const status: boolean = body.resource.status;
+    const status: string = body.resource.status;
     await this.paymentService.updatePayment({
       order_id,
       payer_email,

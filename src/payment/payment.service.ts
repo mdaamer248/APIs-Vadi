@@ -80,7 +80,10 @@ export class PaymentService {
         console.log(error);
       });
     const amountPaid = res.purchase_units[0].payments.captures[0].amount.value;
+    const order_id = orderId;
+    const tokens_amount: string = amountPaid.toString();
     await this.vdcService.purchaseVadiCoin(email, parseInt(amountPaid));
+    await this.updatePayment({order_id, tokens_amount, tokens_transfered: true})
 
     return res;
   }

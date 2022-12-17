@@ -30,10 +30,10 @@ export class Pay {
   currency: string;
 
   @Column({nullable: true})
-  status: boolean;
+  status: string;
 
   @Column({nullable: true})
-  tokens_amount: number;
+  tokens_amount: string;
 
   @Column({nullable: true})
   tokens_transfered: boolean;

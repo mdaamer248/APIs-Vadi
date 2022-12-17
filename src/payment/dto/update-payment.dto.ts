@@ -45,13 +45,13 @@ export class UpdatePaymentDto extends PartialType(CreatePaymentDto) {
 
   @ApiProperty()
   @IsOptional()
-  @IsBoolean()
-  status?: boolean;
+  @IsString()
+  status?: string;
 
   @ApiProperty()
   @IsOptional()
-  @IsNumber()
-  tokens_amount?: number;
+  @IsString()
+  tokens_amount?: string;
 
   @ApiProperty()
   @IsOptional()
