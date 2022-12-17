@@ -17,7 +17,7 @@ export class WebhookController {
   @Post('/order/completion')
   @HttpCode(200)
  async  handleWebhook(@Body() body: any) {
-    if (body.event_type == 'CHECKOUT.ORDER.COMPLETED') {
+    if (body.event_type == 'CHECKOUT.ORDER.APPROVED') {
       return await this.webHookService.checkoutOrderApproved(body);
     }
     if (body.event_type == 'PAYMENT.CAPTURE.COMPLETED') {
