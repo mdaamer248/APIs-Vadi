@@ -142,7 +142,7 @@ export class PaymentService {
     return payment;
   }
 
-  async checkTransactionStatus(hash: string) {
+  async checkTransactionStatus(hash: string){
     const config = {
       method: 'get',
       url: `https://api-goerli.etherscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=${hash}&apikey=${this.configService.get<string>(
@@ -158,7 +158,10 @@ export class PaymentService {
       .catch(function (error) {
         console.log(error);
       });
-    return status;
+
+      let value : string;
+      if(typeof status == 'string') value = status;
+      return value;
   }
 
   //// Issue Tokens
@@ -169,9 +172,9 @@ export class PaymentService {
       email,
       parseInt(amountPaid),
     );
-    const tokenTranferStatus = await this.checkTransactionStatus(tsx.hash);
+    const tokenTranferStatus: string = await this.checkTransactionStatus(tsx.hash);
     let updatedTsx;
-    if (tokenTranferStatus == '1') {
+    if (tokenTranferStatus == '"1"') {
       updatedTsx = await this.updatePayment({
         order_id,
         tokens_amount,
