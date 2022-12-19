@@ -1,13 +1,16 @@
+import { Investor } from 'src/investor/entities/investor.entity';
 import {
     Column,
     Entity,
+    JoinColumn,
+    OneToOne,
     PrimaryGeneratedColumn,
     Unique
 } from 'typeorm';
 import { InvestorLevel } from './investor-level.enum';
 
 @Entity()
-@Unique(['email'])
+// @Unique(['email'])
 export class InvestorProfile {
   @PrimaryGeneratedColumn()
   id: number;
@@ -15,8 +18,17 @@ export class InvestorProfile {
   @Column()
   email: string;
 
-  @Column({ type: "enum", enum: InvestorLevel, default: InvestorLevel.LevelOne})
-  investorLevel: InvestorLevel;
+  // @Column({ type: "enum", enum: InvestorLevel, default: InvestorLevel.LevelOne})
+  // investorLevel: InvestorLevel;
+
+  @Column()
+  range: string;
+
+  @Column()
+  lower: number;
+
+  @Column()
+  upper: number;
 
   @Column({nullable: true})
   fundAmount: number;
@@ -30,14 +42,17 @@ export class InvestorProfile {
   @Column()
   lastName: string;
 
+  @Column({nullable: true})
+  fullName: string;
+
   @Column()
-  dateOfBirth: string;
+  dateOfBirth: Date;
 
   @Column()
   countryOfBirth: string;
 
   @Column()
-  nationality: string;
+  countryCode: number;
 
   @Column({nullable: true})
   cURP: number;
@@ -45,14 +60,17 @@ export class InvestorProfile {
   @Column({ nullable: true})
   rFC: number;
 
-  @Column()
+  @Column({type: "bigint"})
   phoneNumber: number;
+
+  @Column()
+  tax: number;
 
   @Column()
   occupation: string;
 
   @Column()
-  homeAddress: string;
+  nationality: string;
 
   @Column()
   street: string;
@@ -86,4 +104,14 @@ export class InvestorProfile {
 
   @Column({nullable: true})
   addressDoc: string;
+
+  @Column({nullable: true})
+  isGeo: string;
+
+  @Column({default: false})
+  isProfileCompleted: boolean;
+
+  @OneToOne(() => Investor, (investor) => investor.investorProfile )
+  @JoinColumn()
+  investor: Investor;
 }

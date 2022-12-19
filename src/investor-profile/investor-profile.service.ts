@@ -4,28 +4,47 @@ import { UpdateInvestorProfileDto } from './dto/update-investor-profile.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { InvestorProfile } from './entities/investor-profile.entity';
+import { Investor } from 'src/investor/entities/investor.entity';
+import { InvestorService } from 'src/investor/investor.service';
 
 @Injectable()
 export class InvestorProfileService {
 
-  constructor(@InjectRepository(InvestorProfile) private investorProfileRepository: Repository<InvestorProfile>){}
+  constructor(@InjectRepository(InvestorProfile) private investorProfileRepository: Repository<InvestorProfile>,
+    private investorService: InvestorService
+    ){}
 
   async create(createInvestorProfileDto: CreateInvestorProfileDto, email: string) {
-    createInvestorProfileDto.email = email;
-    const investorProfile = await this.investorProfileRepository.create(createInvestorProfileDto);
-    await this.investorProfileRepository.save(investorProfile);
-    return investorProfile;
+    //createInvestorProfileDto.email = email;
+    const investor = await this.investorService.findByEmail(email);
+    const [profile] = await this.investorProfileRepository.find({where:{email}});
+    if(!investor){ return {message:'No registration found with this Email'}}
+     if(!profile){ 
+  
+      const prof = {investor,...createInvestorProfileDto}
+       const investorProfile = await this.investorProfileRepository.create(prof);
+       investorProfile.email = email;
+       await this.investorProfileRepository.save(investorProfile);
+       return {
+         investorProfile,
+         message: 'profile created successfully'
+       }
+      }
+     else{
+       return { message:"profile already created"}
+     }
   }
 
 
   // Save Document name in investorProile
   async saveDoc(email: string, docName: string, type: string){
+    //console.log(email);
     const investorProfile = await this.findOne(email);
     if(type == 'front') investorProfile.idFront = docName;
     if(type == 'back') investorProfile.idBackSide = docName;
     if(type == 'address') investorProfile.addressDoc = docName;
     await this.investorProfileRepository.save(investorProfile);
-    return investorProfile;
+    return { message: 'uploaded successfully'}
   }
 
 
@@ -51,8 +70,8 @@ export class InvestorProfileService {
   // Get investor Level Details
   async getInvestorLevel(email: string){
     const investorProfile = await this.findOne(email);
-    const {investorLevel, fundAmount, totalAmountFunded} = investorProfile;
-    return {investorLevel, fundAmount, totalAmountFunded};
+    const { fundAmount, totalAmountFunded} = investorProfile;
+    return {fundAmount, totalAmountFunded};
   }
 
   findAll() {
@@ -60,16 +79,25 @@ export class InvestorProfileService {
   }
 
   async findOne(email: string) {
-    const [investorProfile] = await this.investorProfileRepository.find({where:{email}})
-    if(!investorProfile) throw new HttpException("Pofile Not Found",404);
+    const investorProfile = await this.getProfileByEmail(email);
     return investorProfile;
   }
 
-  update(id: number, updateInvestorProfileDto: UpdateInvestorProfileDto) {
-    return `This action updates a #${id} investorProfile`;
+
+  // Find by Email
+  async findByEmail(email: string ){
+    const investorProfile = await this.getProfileByEmail(email);
+    return investorProfile;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} investorProfile`;
+   ////// Get wallet by Email
+   async getProfileByEmail(email: string) {
+    const wallets = await this.investorProfileRepository.find({relations:['investor']});
+    const investorEmail = email;
+    let wallet ;
+    wallets.forEach((wall) => {
+      if(wall.investor && wall.investor.email == investorEmail) wallet = wall;
+    })
+    return wallet;
   }
 }

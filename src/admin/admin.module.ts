@@ -10,10 +10,21 @@ import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';
 import { AuthService } from './admin.auth.service';
 import { MailService } from './mail/mail.service';
+import { InvestorProfile } from 'src/investor-profile/entities/investor-profile.entity';
+import { Investor } from 'src/investor/entities/investor.entity';
+import { InvestorService } from 'src/investor/investor.service';
+import { InvestorProfileService } from 'src/investor-profile/investor-profile.service';
+import { User } from 'src/investor/entities/user.entity';
+
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Admin]),
+    TypeOrmModule.forFeature([InvestorProfile]),
+    TypeOrmModule.forFeature([Investor]),
+    TypeOrmModule.forFeature([User]),
+
+
     ConfigModule.forRoot({
       envFilePath:'.env',
     }),
@@ -46,6 +57,6 @@ import { MailService } from './mail/mail.service';
     }),
   ],
   controllers: [AdminController],
-  providers: [AdminService, AuthService, MailService]
+  providers: [AdminService, AuthService, MailService, InvestorService,InvestorProfileService]
 })
 export class AdminModule {}
