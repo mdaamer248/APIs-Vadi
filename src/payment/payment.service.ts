@@ -79,24 +79,8 @@ export class PaymentService {
       .catch(function (error) {
         console.log(error);
       });
-    const amountPaid = res.purchase_units[0].payments.captures[0].amount.value;
-    const order_id = orderId;
-    const tokens_amount: string = amountPaid.toString();
-    const tsx = await this.vdcService.purchaseVadiCoin(
-      email,
-      parseInt(amountPaid),
-    );
-    const tokenTranferStatus = await this.checkTransactionStatus(tsx.hash);
-    let updatedTsx;
-    if (tokenTranferStatus == '1') {
-      updatedTsx = await this.updatePayment({
-        order_id,
-        tokens_amount,
-        tokens_transfered: true,
-      });
-    }
 
-    return updatedTsx;
+    return res;
   }
 
   // generate an access token using client id and app secret
@@ -175,5 +159,27 @@ export class PaymentService {
         console.log(error);
       });
     return status;
+  }
+
+  //// Issue Tokens
+  async issueTokens(amountPaid: string, order_id: string, email: string) {
+    
+    const tokens_amount: string = amountPaid.toString();
+    const tsx = await this.vdcService.purchaseVadiCoin(
+      email,
+      parseInt(amountPaid),
+    );
+    const tokenTranferStatus = await this.checkTransactionStatus(tsx.hash);
+    let updatedTsx;
+    if (tokenTranferStatus == '1') {
+      updatedTsx = await this.updatePayment({
+        order_id,
+        tokens_amount,
+        tokens_transfered: true,
+        transaction_hash: tsx.hash,
+      });
+    }
+
+    return updatedTsx
   }
 }

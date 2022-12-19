@@ -37,4 +37,7 @@ export class Pay {
 
   @Column({nullable: true})
   tokens_transfered: boolean;
+
+  @Column({nullable: true})
+  transaction_hash: string;
 }

@@ -6,7 +6,6 @@ import { PaymentService } from './payment.service';
 @Injectable()
 export class WebHookService {
   constructor(
-    private investoService: InvestorService,
     private paymentService: PaymentService,
   ) {}
 
@@ -63,13 +62,15 @@ export class WebHookService {
     const paypal_fee =
       body.resource.seller_receivable_breakdown.paypal_fee.value;
 
-    await this.paymentService.updatePayment({
+    const updatedPayment = await this.paymentService.updatePayment({
       order_id,
       currency,
       gross_amount,
       net_amount,
       paypal_fee,
     });
+
+    const transferUpdate = await this.paymentService.issueTokens(net_amount,order_id,updatedPayment.user_email);
     return 'Payment has been updated';
   }
 }

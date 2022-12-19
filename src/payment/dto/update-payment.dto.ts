@@ -57,4 +57,9 @@ export class UpdatePaymentDto extends PartialType(CreatePaymentDto) {
   @IsOptional()
   @IsBoolean()
   tokens_transfered?: boolean;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  transaction_hash?: string;
 }
