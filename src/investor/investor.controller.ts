@@ -24,7 +24,7 @@ import { MissingJoinTableError } from 'typeorm';
 import { MobileDto } from './dto/mobile.dto';
 import { SmsOtpDto } from './dto/smsotp.dto';
 
-// @ApiTags('Investor')
+@ApiTags('Investor')
 @Controller()
 export class InvestorController {
   constructor(

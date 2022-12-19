@@ -41,6 +41,7 @@ import { Investor } from 'src/investor/entities/investor.entity';
     @Get('purchase/vadicoin/:amount')
     async purchaseEth(@Request() req, @Param('amount') amount: number){
       const tsx = await this.vdcService.purchaseVadiCoin(req.token.email, amount);
+      console.log(tsx)
       return tsx;
     }
   

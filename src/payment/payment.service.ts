@@ -5,7 +5,7 @@ import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import axios from 'axios';
 import { VdcService } from 'src/wallet/blockChains/vadiCoin/vadicoin.service';
-import { Pay} from './entities/payment.entity';
+import { Pay } from './entities/payment.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -82,10 +82,21 @@ export class PaymentService {
     const amountPaid = res.purchase_units[0].payments.captures[0].amount.value;
     const order_id = orderId;
     const tokens_amount: string = amountPaid.toString();
-    await this.vdcService.purchaseVadiCoin(email, parseInt(amountPaid));
-    await this.updatePayment({order_id, tokens_amount, tokens_transfered: true})
+    const tsx = await this.vdcService.purchaseVadiCoin(
+      email,
+      parseInt(amountPaid),
+    );
+    const tokenTranferStatus = await this.checkTransactionStatus(tsx.hash);
+    let updatedTsx;
+    if (tokenTranferStatus == '1') {
+      updatedTsx = await this.updatePayment({
+        order_id,
+        tokens_amount,
+        tokens_transfered: true,
+      });
+    }
 
-    return res;
+    return updatedTsx;
   }
 
   // generate an access token using client id and app secret
@@ -145,5 +156,24 @@ export class PaymentService {
 
     await this.paymentRepository.save(payment);
     return payment;
+  }
+
+  async checkTransactionStatus(hash: string) {
+    const config = {
+      method: 'get',
+      url: `https://api-goerli.etherscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=${hash}&apikey=${this.configService.get<string>(
+        'ETHERSCAN_API_KEY',
+      )}`,
+      headers: {},
+    };
+
+    const status = await axios(config)
+      .then(function (response) {
+        return JSON.stringify(response.data.status);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    return status;
   }
 }
