@@ -8,11 +8,15 @@ import { VdcService } from 'src/wallet/blockChains/vadiCoin/vadicoin.service';
 import { Pay } from './entities/payment.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { HotPay } from './entities/hotpayment.entity';
+import { CreateHotPayDto } from './dto/create-hot-pay.dto';
+import { UpdateHotPayDto } from './dto/update-hot-pay.dto';
 
 @Injectable()
 export class PaymentService {
   constructor(
     @InjectRepository(Pay) private paymentRepository: Repository<Pay>,
+    @InjectRepository(HotPay) private hotPayRepository: Repository<HotPay>,
     private investorService: InvestorService,
     private configService: ConfigService,
     private vdcService: VdcService,
@@ -142,7 +146,7 @@ export class PaymentService {
     return payment;
   }
 
-  async checkTransactionStatus(hash: string){
+  async checkTransactionStatus(hash: string) {
     const config = {
       method: 'get',
       url: `https://api-goerli.etherscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=${hash}&apikey=${this.configService.get<string>(
@@ -156,23 +160,25 @@ export class PaymentService {
         return JSON.stringify(response.data.status);
       })
       .catch(function (error) {
-        console.log(error);
+        console.log(' gvfgsd;vj', error);
       });
 
-      let value : string;
-      if(typeof status == 'string') value = status;
-      return value;
+    let value: string;
+    if (typeof status == 'string') value = status;
+
+    return value;
   }
 
   //// Issue Tokens
   async issueTokens(amountPaid: string, order_id: string, email: string) {
-    
     const tokens_amount: string = amountPaid.toString();
     const tsx = await this.vdcService.purchaseVadiCoin(
       email,
       parseInt(amountPaid),
     );
-    const tokenTranferStatus: string = await this.checkTransactionStatus(tsx.hash);
+    const tokenTranferStatus: string = await this.checkTransactionStatus(
+      tsx.hash,
+    );
     let updatedTsx;
     if (tokenTranferStatus == '"1"') {
       updatedTsx = await this.updatePayment({
@@ -183,6 +189,124 @@ export class PaymentService {
       });
     }
 
-    return updatedTsx
+    return updatedTsx;
+  }
+
+  //// Create Hot Wallet Order
+  async createHotWalletOrder(email: string) {
+    const investor = await this.investorService.findByEmail(email);
+    return { eth_address: investor.wallet.ethPublicKey };
+  }
+
+  /// Claim Vadi Coins
+  async claimVadiCoins(email: string, senderAddress: string) {
+    const investor = await this.investorService.findByEmail(email);
+    const tsxs = await this.verifyTransaction(
+      investor.wallet.ethPublicKey,
+      senderAddress,
+      email,
+    );
+
+    const setteledTsx = await this.handlePendingTransaction(tsxs, email);
+    return setteledTsx;
+  }
+
+  /// Verify Transaction  returns valid pending transactions
+  async verifyTransaction(
+    vadi_address: string,
+    from: string,
+    user_email: string,
+  ) {
+    const tsxs = await axios
+      .get(
+        `https://api-goerli.etherscan.io/api?module=account&action=txlist&address=${vadi_address}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${this.configService.get<string>(
+          'ETHERSCAN_API_KEY',
+        )}`,
+      )
+      .then(function (response) {
+        return response.data.result;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    // Filtering valid transactions
+    const recordedTsxs = await this.hotPayRepository.find({
+      where: { user_email },
+    });
+    let recordedHashes = [];
+    if (recordedTsxs.length != 0) {
+      recordedHashes = recordedTsxs.map((tsx) => tsx.recieved_tsx_hash);
+    }
+
+    const res = tsxs.filter((tsx) => {
+      if (
+        tsx.to == vadi_address.toLocaleLowerCase() &&
+        tsx.from == from.toLocaleLowerCase() &&
+        tsx.txreceipt_status == 1 &&
+        !recordedHashes.includes(tsx.hash)
+      ) {
+        return true;
+      }
+    });
+
+    res.forEach(async (tsx) => {
+      const savedTsx = await this.createHotPay({
+        user_email,
+        amount: tsx.value,
+        recieved_tsx_hash: tsx.hash,
+        vadi_address,
+        from,
+        status: 'incomplete',
+      });
+    });
+    return res;
+  }
+
+  /// Handle pending transactions
+  async  handlePendingTransaction(tsxs: any[], email: string) {
+    const tsxHandeled = tsxs.map(async  (tsx) => {
+      const transac = await this.vdcService.purchaseVadiCoin(email, 2);
+      const tokenTranferStatus: string = await this.checkTransactionStatus(
+        transac.hash,
+      );
+
+      if (tokenTranferStatus == '"1"') {
+        const updatedTsx = await this.updateHotPay({
+          recieved_tsx_hash: tsx.hash,
+          tokens_transfered: true,
+          transaction_hash: transac.hash,
+          status: 'completed',
+          tokens_amount: '2',
+        });
+      }
+      console.log(transac.hash);
+      
+      return transac.hash;
+    });
+    
+    return tsxHandeled;
+  }
+
+  //// Create Hot Payment
+  async createHotPay(createHotPayDto: CreateHotPayDto) {
+    const hotPay = this.hotPayRepository.create(createHotPayDto);
+    await this.hotPayRepository.save(hotPay);
+    return hotPay;
+  }
+
+  /// Update Hot Payment
+  async updateHotPay(updateHotPayDto: UpdateHotPayDto) {
+    const [hotPay] = await this.hotPayRepository.find({
+      where: { recieved_tsx_hash: updateHotPayDto.recieved_tsx_hash },
+    });
+    if (hotPay) {
+      const keys = Object.keys(updateHotPayDto);
+      keys.forEach((key) => {
+        hotPay[key] = updateHotPayDto[key];
+      });
+      await this.hotPayRepository.save(hotPay);
+      return hotPay;
+    }
   }
 }

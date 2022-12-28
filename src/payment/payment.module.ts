@@ -7,9 +7,15 @@ import { WebHookService } from './webhook.service';
 import { WebhookController } from './webhook.controller';
 import { Pay } from './entities/payment.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HotPay } from './entities/hotpayment.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Pay]), InvestorModule, WalletModule],
+  imports: [
+    TypeOrmModule.forFeature([Pay]),
+    TypeOrmModule.forFeature([HotPay]),
+    InvestorModule,
+    WalletModule,
+  ],
   controllers: [PaymentController, WebhookController],
   providers: [PaymentService, WebHookService],
 })

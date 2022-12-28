@@ -49,7 +49,6 @@ export class Investor {
   resetTokenIssuedAt : number;
 
   @OneToOne(() => Wallet, (wallet) => wallet.investor )
-  @JoinColumn()
   wallet : Wallet;
 
   @OneToOne(() => InvestorProfile, (investorProfile) => investorProfile.investor )

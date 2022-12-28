@@ -101,11 +101,19 @@ export class InvestorService {
 
   // Get investor by Email
   async findByEmail(email: string) {
-    const [investor] = await this.investorRepository.find({
-      relations: ["wallet"],
+    let inv;
+    const investors = await this.investorRepository.find({
+      relations: ['wallet'],
     });
+
+
+    investors.forEach((investor) => {
+      if(investor.email == email ) inv = investor;
+    })
+
+    if(!inv) throw new NotFoundException('Investor Not found');
     // console.log(investor)
-    return investor;
+    return inv;
   }
 
 
