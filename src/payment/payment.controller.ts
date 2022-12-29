@@ -15,6 +15,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { InvestorGuard } from 'src/guards/investor.guard';
 import { MakePaymentDto } from './dto/make-payment.dto';
 import { HotWalletPaymentDto } from './dto/hot-wallet-payment.dto';
+import { EthToVadiDto } from './dto/eth-to-vadi.dto';
 
 @ApiTags('Payment')
 @Controller('payment')
@@ -56,6 +57,14 @@ export class PaymentController {
   @Post('/claim-vadi-coin')
   async claimVadiCoins(@Request() req, @Body() hotWalletPaymentDto: HotWalletPaymentDto) {
   const res = await this.paymentService.claimVadiCoins(req.token.email, hotWalletPaymentDto.metamask_address);
+  return res;
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(InvestorGuard)
+  @Post('/exchange/eth-to-vadi')
+  async exchangeToVadiCoins(@Request() req, @Body() ethToVadiDto: EthToVadiDto) {
+  const res = await this.paymentService.exchangeToVdcCoins(req.token.email, ethToVadiDto.eth_amount);
   return res;
   }
 }

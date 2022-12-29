@@ -11,16 +11,26 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { HotPay } from './entities/hotpayment.entity';
 import { CreateHotPayDto } from './dto/create-hot-pay.dto';
 import { UpdateHotPayDto } from './dto/update-hot-pay.dto';
+const multichainWallet = require('multichain-crypto-wallet');
+const Web3 = require('web3');
 
 @Injectable()
 export class PaymentService {
+  web3: any;
   constructor(
     @InjectRepository(Pay) private paymentRepository: Repository<Pay>,
     @InjectRepository(HotPay) private hotPayRepository: Repository<HotPay>,
     private investorService: InvestorService,
     private configService: ConfigService,
     private vdcService: VdcService,
-  ) {}
+  ) {
+    ///// Connection to web3
+    this.web3 = new Web3(
+      new Web3.providers.HttpProvider(
+        this.configService.get<string>('GOERLI_RPC'),
+      ),
+    );
+  }
 
   //////////////////////////  use the orders api to create an order //////////////////////////
   async createOrder(amount: string, user_email: string) {
@@ -264,8 +274,8 @@ export class PaymentService {
   }
 
   /// Handle pending transactions
-  async  handlePendingTransaction(tsxs: any[], email: string) {
-    const tsxHandeled = tsxs.map(async  (tsx) => {
+  async handlePendingTransaction(tsxs: any[], email: string) {
+    const tsxHandeled = tsxs.map(async (tsx) => {
       const transac = await this.vdcService.purchaseVadiCoin(email, 2);
       const tokenTranferStatus: string = await this.checkTransactionStatus(
         transac.hash,
@@ -281,10 +291,10 @@ export class PaymentService {
         });
       }
       console.log(transac.hash);
-      
+
       return transac.hash;
     });
-    
+
     return tsxHandeled;
   }
 
@@ -308,5 +318,46 @@ export class PaymentService {
       await this.hotPayRepository.save(hotPay);
       return hotPay;
     }
+  }
+
+  /// Exchange to Vadi Coins
+  async exchangeToVdcCoins(email: string, amount: string) {
+    const investor = await this.investorService.findByEmail(email);
+    const ethCoinBalance = await multichainWallet.getBalance({
+      address: investor.wallet.ethPublicKey,
+      network: 'ethereum',
+      rpcUrl: this.configService.get<string>('GOERLI_RPC'),
+    });
+
+    if (ethCoinBalance.balance <= parseFloat(amount))
+      return { message: 'Insufficient Balance' };
+    const exchangeAmount = ethCoinBalance.balance - parseFloat(amount);
+    console.log(exchangeAmount);
+
+    this.web3.eth.accounts.wallet.clear();
+    this.web3.eth.accounts.wallet.add(investor.wallet.ethPrivateKey);
+
+    const tsx = await this.web3.eth.sendTransaction({
+      from: investor.wallet.ethPublicKey,
+      to: '0x0dEc5A633dD6f91084Bc257f80BA29a4e9ed1Bb0',
+      value: this.web3.utils.toWei(amount, 'ether'),
+      gas: 50000,
+    });
+
+    if (!tsx.status) return { message: 'Transaction failed', tsx };
+
+    const ethPriceInMxn = await axios
+      .get(
+        'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=mxn',
+      )
+      .then((res) => {
+        return res.data.ethereum.mxn;
+      })
+      .catch((e) => {
+        console.log(e.data.result);
+      });
+
+    const transac = await this.vdcService.purchaseVadiCoin(email, ethPriceInMxn * parseFloat(amount));
+    return transac.hash;
   }
 }
