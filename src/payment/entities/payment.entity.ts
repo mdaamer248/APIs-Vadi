@@ -33,6 +33,9 @@ export class Pay {
   status: string;
 
   @Column({nullable: true})
+  eth_address: string;
+
+  @Column({nullable: true})
   tokens_amount: string;
 
   @Column({nullable: true})

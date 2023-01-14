@@ -55,6 +55,11 @@ export class UpdatePaymentDto extends PartialType(CreatePaymentDto) {
 
   @ApiProperty()
   @IsOptional()
+  @IsString()
+  eth_address?: string;
+
+  @ApiProperty()
+  @IsOptional()
   @IsBoolean()
   tokens_transfered?: boolean;
 

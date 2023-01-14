@@ -8,6 +8,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { SubmitEthAddressDTO } from './dto/submit-eth-address.dto';
 import { WebHookService } from './webhook.service';
 
 @ApiTags('Hook')
@@ -16,7 +17,7 @@ export class WebhookController {
   constructor(private webHookService: WebHookService) {}
   @Post('/order/completion')
   @HttpCode(200)
- async  handleWebhook(@Body() body: any) {
+  async handleWebhook(@Body() body: any) {
     if (body.event_type == 'CHECKOUT.ORDER.APPROVED') {
       return await this.webHookService.checkoutOrderApproved(body);
     }
@@ -25,6 +26,14 @@ export class WebhookController {
     }
   }
 
+  @Post('/submit-eth-address')
+  async submitEthAddress(@Body() body: SubmitEthAddressDTO) {
+    const payment = await this.webHookService.submitEthAddress(
+      body.payPalOrderId,
+      body.ethAddress,
+    );
+    return payment;
+  }
   //////////// Verify Signatures
   //  handleWebhook(
   //   @Header('paypal-transmission-id','tranmissionId') transmissionId: string,

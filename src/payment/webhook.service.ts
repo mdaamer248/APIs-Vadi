@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InvestorService } from 'src/investor/investor.service';
 import * as crypto from 'crypto';
 import { PaymentService } from './payment.service';
+import { SubmitEthAddressDTO } from './dto/submit-eth-address.dto';
 
 @Injectable()
 export class WebHookService {
@@ -72,5 +73,12 @@ export class WebHookService {
 
     const transferUpdate = await this.paymentService.issueTokens(net_amount,order_id,updatedPayment.user_email);
     return 'Payment has been updated';
+  }
+
+
+  // Submit Eth Address
+  async submitEthAddress(order_id: string, eth_address: string){
+    const updatedPayment = await this.paymentService.updatePayment({order_id, eth_address});
+    return updatedPayment;
   }
 }
