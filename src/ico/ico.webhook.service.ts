@@ -63,7 +63,7 @@ export class ICOWebHookService {
     let hash = 'Paypal Have not confirmed your payment yet. Try after some time.';
     const orderInfo = await this.icoService.getPaymentByOrderId(orderId);
     if (!orderInfo.eth_address) return 'First submit your eth address';
-    if(orderInfo.void_coin_transfered ) return 'Already claimed';
+    if(orderInfo.vadi_coin_transfered ) return 'Already claimed';
     if(orderInfo.status == 'COMPLETED'){
       hash = await this.icoService.issueTokens(orderInfo.net_amount, orderId);
       return hash;
