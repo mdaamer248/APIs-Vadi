@@ -6,6 +6,8 @@ import {
     Header,
     Body,
     Request,
+    Get,
+    Param,
   } from '@nestjs/common';
   import { ApiTags } from '@nestjs/swagger';
   import { SubmitICOEthAddressDTO } from './dto/submit-ico-eth-address.dto';
@@ -33,6 +35,12 @@ import {
         body.ethAddress,
       );
       return payment;
+    }
+
+    @Get('claim/vadi-coins/:orderId')
+    async claimVadiCoinsByOrderId(@Param('orderId') orderId: string){
+      const tsx_hash = await this.webHookService.issueVadiCoins(orderId);
+      return tsx_hash;
     }
   }
   

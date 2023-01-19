@@ -40,7 +40,7 @@ export class ICOWebHookService {
     const paypal_fee =
       body.resource.seller_receivable_breakdown.paypal_fee.value;
 
-    const updatedPayment = await this.icoService.updatePayment({
+     await this.icoService.updatePayment({
       order_id,
       currency,
       gross_amount,
@@ -48,7 +48,6 @@ export class ICOWebHookService {
       paypal_fee,
     });
 
-    const transferUpdate = await this.icoService.issueTokens(net_amount,order_id);
     return 'Payment has been updated';
   }
 
@@ -57,5 +56,19 @@ export class ICOWebHookService {
   async submitEthAddress(order_id: string, eth_address: string){
     const updatedPayment = await this.icoService.updatePayment({order_id, eth_address});
     return updatedPayment;
+  }
+
+  // Claim Vadi Coins
+  async issueVadiCoins(orderId: string){
+    let hash = 'Paypal Have not confirmed your payment yet. Try after some time.';
+    const orderInfo = await this.icoService.getPaymentByOrderId(orderId);
+    if (!orderInfo.eth_address) return 'First submit your eth address';
+    if(orderInfo.status == 'COMPLETED'){
+      hash = await this.icoService.issueTokens(orderInfo.net_amount, orderInfo.eth_address);
+      return hash;
+    }
+
+    return hash;
+
   }
 }
