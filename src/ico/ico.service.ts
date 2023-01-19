@@ -7,6 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
+import { loadavg } from 'os';
 import { NotFoundError } from 'rxjs';
 import { Repository } from 'typeorm';
 import { CreatePayPalPaymentDto } from './dto/create-paypal-payment.dto';
@@ -144,7 +145,9 @@ export class ICOService {
   async issueTokens(amountPaid: string, order_id: string) {
     const vadi_coin_amount: string = amountPaid.toString();
     const orderInfo = await this.getPaymentByOrderId(order_id)
-    const tsx = await this.transferVadiCoins(orderInfo.eth_address, vadi_coin_amount)
+    const tsx = await this.transferVadiCoins(orderInfo.eth_address, parseFloat(vadi_coin_amount))
+    console.log(tsx);
+    
     const tokenTranferStatus: string = await this.checkTransactionStatus(
       tsx.hash,
     );
