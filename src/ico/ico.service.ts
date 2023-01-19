@@ -146,10 +146,10 @@ export class ICOService {
     const vadi_coin_amount: string = amountPaid.toString();
     const orderInfo = await this.getPaymentByOrderId(order_id)
     const tsx = await this.transferVadiCoins(orderInfo.eth_address, parseFloat(vadi_coin_amount))
-    console.log(tsx);
+    
     
     const tokenTranferStatus: string = await this.checkTransactionStatus(
-      tsx.hash,
+      tsx,
     );
     if (tokenTranferStatus == '"1"') {
       await this.updatePayment({
@@ -158,7 +158,7 @@ export class ICOService {
         vadi_coin_transfered: true,
         vadi_coin_transfer_tsx_hash: tsx.hash,
       });
-      return tsx.hash;
+      return tsx;
     }
 
     return tsx;
