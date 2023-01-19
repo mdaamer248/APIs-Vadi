@@ -84,7 +84,7 @@ export class ICOService {
     // a) USDC ( use USDC contract address )
     if (
       details.to.toLowerCase() ==
-      '0x4d3e38193c9f2392C0c9C79c7D62aDB9Af1c9683'.toLowerCase()
+      '0x1a0304acDB077F9d7e0D082a5a1aCE5F4d3b9B51'.toLowerCase()
     ) {
       const [transaction] = await this.icoTsxsRepository.find({
         where: {
