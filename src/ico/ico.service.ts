@@ -148,20 +148,22 @@ export class ICOService {
     const tsx = await this.transferVadiCoins(orderInfo.eth_address, parseFloat(vadi_coin_amount))
     
     
-    const tokenTranferStatus: string = await this.checkTransactionStatus(
+    const tokenTransferStatus: string = await this.checkTransactionStatus(
       tsx,
     );
-    // if (tokenTranferStatus == '"1"') {
+    console.log(tokenTransferStatus);
+    
+    if (tokenTransferStatus == '"1"') {
       await this.updatePayment({
         order_id,
         vadi_coin_amount,
         vadi_coin_transfered: true,
-        vadi_coin_transfer_tsx_hash: tsx.hash,
+        vadi_coin_transfer_tsx_hash: tsx,
       });
       return tsx;
-    // }
+    }
 
-    // return tsx;
+    return tsx;
 
   }
 
