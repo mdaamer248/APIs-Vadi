@@ -64,7 +64,7 @@ export class ICOWebHookService {
     const orderInfo = await this.icoService.getPaymentByOrderId(orderId);
     if (!orderInfo.eth_address) return 'First submit your eth address';
     if(orderInfo.status == 'COMPLETED'){
-      hash = await this.icoService.issueTokens(orderInfo.net_amount, orderInfo.eth_address);
+      hash = await this.icoService.issueTokens(orderInfo.net_amount, orderId);
       return hash;
     }
 
