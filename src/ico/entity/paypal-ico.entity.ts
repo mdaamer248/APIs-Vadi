@@ -36,7 +36,7 @@ export class PayPalIcoPayment {
   vadi_coin_amount: string;
 
   @Column({nullable: true})
-  void_coin_transfered: boolean;
+  vadi_coin_transfered: boolean;
 
   @Column({nullable: true})
   vadi_coin_transfer_tsx_hash: string;
