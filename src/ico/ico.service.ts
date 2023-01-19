@@ -148,17 +148,18 @@ export class ICOService {
     const tokenTranferStatus: string = await this.checkTransactionStatus(
       tsx.hash,
     );
-    let updatedTsx;
     if (tokenTranferStatus == '"1"') {
-      updatedTsx = await this.updatePayment({
+      await this.updatePayment({
         order_id,
         vadi_coin_amount,
         vadi_coin_transfered: true,
         vadi_coin_transfer_tsx_hash: tsx.hash,
       });
+      return tsx.hash;
     }
 
-    return updatedTsx;
+    return tsx;
+
   }
 
 
