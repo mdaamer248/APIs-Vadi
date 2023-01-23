@@ -141,18 +141,16 @@ export class ICOService {
     return transfer.hash;
   }
 
-
   async issueTokens(amountPaid: string, order_id: string) {
     const vadi_coin_amount: string = amountPaid.toString();
-    const orderInfo = await this.getPaymentByOrderId(order_id)
-    const tsx = await this.transferVadiCoins(orderInfo.eth_address, parseFloat(vadi_coin_amount))
-    
-    
-    const tokenTransferStatus: string = await this.checkTransactionStatus(
-      tsx,
+    const orderInfo = await this.getPaymentByOrderId(order_id);
+    const tsx = await this.transferVadiCoins(
+      orderInfo.eth_address,
+      parseFloat(vadi_coin_amount),
     );
-    console.log(tokenTransferStatus);
-    
+
+    const tokenTransferStatus: string = await this.checkTransactionStatus(tsx);
+
     if (tokenTransferStatus == '"1"') {
       await this.updatePayment({
         order_id,
@@ -164,9 +162,65 @@ export class ICOService {
     }
 
     return tsx;
-
   }
 
+  // For ETH
+  async ethToVadiCoin(tsx_hash: string) {
+    const [tsx] = await this.icoTsxsRepository.find({
+      where: {
+        recieved_token_tsx_hash: tsx_hash,
+      },
+    });
+
+    if ( tsx && tsx.tsx_status == 'Completed')
+      throw new HttpException(
+        'Tokens are already claimed for this Transaction hash.',
+        HttpStatus.BAD_REQUEST,
+      );
+    const details = await this.web3.eth.getTransaction(tsx_hash);
+    if (
+      details.to.toLocaleLowerCase() !=
+      '0x089797d601E7973278e62008bEbE693cA060A396'.toLocaleLowerCase()
+    )
+      throw new HttpException(
+        'Etherium was not send to vadi coin address',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const ethAmount = parseFloat(details.value) / 10 ** 18;
+
+    const ethPriceInMxn = await axios
+      .get(
+        'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=mxn',
+      )
+      .then((res) => {
+        return res.data.ethereum.mxn;
+      })
+      .catch((e) => {
+        console.log(e.data.result);
+      });
+
+    const hash = await this.transferVadiCoins(
+      details.from,
+      ethAmount * ethPriceInMxn,
+    );
+
+    // Checking transaction status
+    const tokenTransferStatus: string = await this.checkTransactionStatus(hash);
+    if (tokenTransferStatus == '"1"') {
+      await this.createTsx({
+        recieved_token_amount: ethAmount,
+        recieved_token_name: 'ETH',
+        recieved_token_tsx_hash: tsx_hash,
+        tsx_status: 'Completed',
+        vadi_coins_transfered: true,
+        vadi_coin_transfer_tsx_hash: hash,
+        vadi_coin_amount: ethAmount * ethPriceInMxn,
+        users_eth_address: details.from,
+      });
+    }
+    return hash;
+  }
 
   //// Repository Methods
 

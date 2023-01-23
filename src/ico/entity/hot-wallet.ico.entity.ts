@@ -14,7 +14,7 @@ export class HotWalletICO {
   @Column({ nullable: true })
   recieved_token_tsx_hash: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'decimal'})
   recieved_token_amount: number;
 
   @Column({ nullable: true })
@@ -26,7 +26,7 @@ export class HotWalletICO {
   @Column({ nullable: true })
   tsx_status: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'decimal'})
   vadi_coin_amount: number;
 
   @Column({ nullable: true })

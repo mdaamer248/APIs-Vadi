@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { ClaimCoinDTO } from "./dto/claim-coin.dto";
 import { PaymentAmountDto } from "./dto/payment-amount.dto";
@@ -14,6 +14,13 @@ export class ICOController{
     async claimVadiCoins(@Body() body: ClaimCoinDTO){
         const tsx_hash = await this.icoService.claimCoins(body.transaction_hash, body.eth_address);
         return tsx_hash;
+    }
+
+    // For ETH
+    @Get('/claim/vadi-coins/by-eth/:tsx_hash')
+    async claimVadiCoinsByEth(@Param('tsx_hash') tsx_hash: string){
+      const hash = await this.icoService.ethToVadiCoin(tsx_hash);
+      return hash;
     }
 
     // For Paypal Payments
