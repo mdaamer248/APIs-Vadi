@@ -124,11 +124,11 @@ export class ICOService {
     }
   }
 
-  async transferVadiCoins(address, amount) {
+  async transferVadiCoins(address: string, amount: number) {
     // Transferring ERC20 tokens from one address to another.
     const transfer = await multichainWallet.transfer({
       recipientAddress: address,
-      amount: amount,
+      amount: amount.toFixed(2),
       network: 'ethereum',
       rpcUrl: this.configService.get<string>('GOERLI_RPC'),
       privateKey: this.configService.get<string>('ADMIN_PRIVATE_KEY'),
@@ -187,7 +187,10 @@ export class ICOService {
         HttpStatus.BAD_REQUEST,
       );
 
-    const ethAmount = parseFloat(details.value) / 10 ** 18;
+   
+    
+    const ethAmount = this.web3.utils.fromWei(details.value, 'ether');
+  
 
     const ethPriceInMxn = await axios
       .get(
