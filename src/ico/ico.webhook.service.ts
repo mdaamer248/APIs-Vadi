@@ -11,6 +11,11 @@ export class ICOWebHookService {
 
   //// Checkout order approved status
   async checkoutOrderApproved(body: any) {
+
+    console.log("checkoutOrderApproved");
+    console.log(body);
+    
+    
     const order_id: string = body.resource.id;
     const payer_name: string =
       body.resource.payer.name.given_name +
@@ -31,6 +36,11 @@ export class ICOWebHookService {
 
   //// Payment Capture
   async paymentCaptureCompleted(body: any) {
+
+    console.log("paymentCaptureCompleted");
+    console.log(body);
+
+
     const order_id = body.resource.supplementary_data.related_ids.order_id;
     const currency = body.resource.amount.currency_code;
     const gross_amount =
