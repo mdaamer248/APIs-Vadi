@@ -60,8 +60,7 @@ export class ICOWebHookService {
 
   // Claim Vadi Coins
   async issueVadiCoins(orderId: string) {
-    let hash =
-      'Paypal Have not confirmed your payment yet. Try after some time, with the OrderId.';
+    let hash;
     const orderInfo = await this.icoService.getPaymentByOrderId(orderId);
     if (!orderInfo.eth_address) return 'First submit your eth address';
     if (orderInfo.vadi_coin_transfered) return 'Already claimed';
@@ -70,6 +69,8 @@ export class ICOWebHookService {
       return hash;
     }
 
-    return hash;
+    throw new Error(
+      'Paypal Have not confirmed your payment yet. Try after some time, with the OrderId.',
+    );
   }
 }
