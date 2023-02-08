@@ -5,17 +5,10 @@ import { ICOService } from './ico.service';
 
 @Injectable()
 export class ICOWebHookService {
-  constructor(
-    private icoService: ICOService,
-  ) {}
+  constructor(private icoService: ICOService) {}
 
   //// Checkout order approved status
   async checkoutOrderApproved(body: any) {
-
-    console.log("checkoutOrderApproved");
-    console.log(body);
-    
-    
     const order_id: string = body.resource.id;
     const payer_name: string =
       body.resource.payer.name.given_name +
@@ -36,11 +29,6 @@ export class ICOWebHookService {
 
   //// Payment Capture
   async paymentCaptureCompleted(body: any) {
-
-    console.log("paymentCaptureCompleted");
-    console.log(body);
-
-
     const order_id = body.resource.supplementary_data.related_ids.order_id;
     const currency = body.resource.amount.currency_code;
     const gross_amount =
@@ -50,7 +38,7 @@ export class ICOWebHookService {
     const paypal_fee =
       body.resource.seller_receivable_breakdown.paypal_fee.value;
 
-     await this.icoService.updatePayment({
+    await this.icoService.updatePayment({
       order_id,
       currency,
       gross_amount,
@@ -61,25 +49,27 @@ export class ICOWebHookService {
     return 'Payment has been updated';
   }
 
-
   // Submit Eth Address
-  async submitEthAddress(order_id: string, eth_address: string){
-    const updatedPayment = await this.icoService.updatePayment({order_id, eth_address});
+  async submitEthAddress(order_id: string, eth_address: string) {
+    const updatedPayment = await this.icoService.updatePayment({
+      order_id,
+      eth_address,
+    });
     return updatedPayment;
   }
 
   // Claim Vadi Coins
-  async issueVadiCoins(orderId: string){
-    let hash = 'Paypal Have not confirmed your payment yet. Try after some time.';
+  async issueVadiCoins(orderId: string) {
+    let hash =
+      'Paypal Have not confirmed your payment yet. Try after some time, with the OrderId.';
     const orderInfo = await this.icoService.getPaymentByOrderId(orderId);
     if (!orderInfo.eth_address) return 'First submit your eth address';
-    if(orderInfo.vadi_coin_transfered ) return 'Already claimed';
-    if(orderInfo.status == 'COMPLETED' && orderInfo.net_amount){
+    if (orderInfo.vadi_coin_transfered) return 'Already claimed';
+    if (orderInfo.status == 'COMPLETED' && orderInfo.net_amount) {
       hash = await this.icoService.issueTokens(orderInfo.net_amount, orderId);
       return hash;
     }
 
     return hash;
-
   }
 }
