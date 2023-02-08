@@ -69,7 +69,7 @@ export class ICOWebHookService {
       return hash;
     }
 
-    throw new Error(
+    return new Error(
       'Paypal Have not confirmed your payment yet. Try after some time, with the OrderId.',
     );
   }
