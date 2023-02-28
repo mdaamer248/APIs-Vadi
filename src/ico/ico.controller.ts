@@ -19,7 +19,8 @@ export class ICOController{
     // For ETH
     @Get('/claim/vadi-coins/by-eth/:tsx_hash')
     async claimVadiCoinsByEth(@Param('tsx_hash') tsx_hash: string){
-      const hash = await this.icoService.ethToVadiCoin(tsx_hash);
+      // const hash = await this.icoService.ethToVadiCoin(tsx_hash);
+      const hash = await this.icoService.ethTsxUpdate(tsx_hash);
       return hash;
     }
 

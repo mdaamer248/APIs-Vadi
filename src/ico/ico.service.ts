@@ -30,8 +30,11 @@ export class ICOService {
     private configService: ConfigService,
   ) {
     this.web3 = new Web3(
-      'https://eth-goerli.g.alchemy.com/v2/G9aSmHyq0pCXRyGxOeC93wEDoxNiHCSj',
+      // 'https://eth-goerli.g.alchemy.com/v2/G9aSmHyq0pCXRyGxOeC93wEDoxNiHCSj',
+      this.configService.get<string>("SEPOLIA_RPC")
     );
+
+    
   }
 
   async claimCoins(tsxHash: string, eth_address: string) {
@@ -164,7 +167,9 @@ export class ICOService {
     return tsx;
   }
 
-  // For ETH
+  ///////// For ETH
+
+  // previous version function
   async ethToVadiCoin(tsx_hash: string) {
     const [tsx] = await this.icoTsxsRepository.find({
       where: {
@@ -172,7 +177,7 @@ export class ICOService {
       },
     });
 
-    if ( tsx && tsx.tsx_status == 'Completed')
+    if (tsx && tsx.tsx_status == 'Completed')
       throw new HttpException(
         'Tokens are already claimed for this Transaction hash.',
         HttpStatus.BAD_REQUEST,
@@ -187,10 +192,7 @@ export class ICOService {
         HttpStatus.BAD_REQUEST,
       );
 
-   
-    
     const ethAmount = this.web3.utils.fromWei(details.value, 'ether');
-  
 
     const ethPriceInMxn = await axios
       .get(
@@ -223,6 +225,57 @@ export class ICOService {
       });
     }
     return hash;
+  }
+
+  // updated version function
+  async ethTsxUpdate(tsx_hash: string) {
+    const [tsx] = await this.icoTsxsRepository.find({
+      where: {
+        recieved_token_tsx_hash: tsx_hash,
+      },
+    });
+
+    if (tsx && tsx.tsx_status == 'Completed')
+      throw new HttpException(
+        'Tokens are already claimed for this Transaction hash.',
+        HttpStatus.BAD_REQUEST,
+      );
+    const details = await this.web3.eth.getTransactionReceipt(tsx_hash);
+    const ethDetails = await this.web3.eth.getTransaction(tsx_hash);
+
+    const vadi_coins_transfered = this.web3.utils.hexToNumber(details.logs[0].data) / 10**8;
+    
+    
+    if (
+      details.to.toLocaleLowerCase() !=
+      this.configService
+        .get<string>('VADI_COIN_TRANSPARENT_CONTRACT_ADDRESS')
+        .toLocaleLowerCase()
+    )
+      throw new HttpException(
+        'Etherium was not send to Vadi smart contract.',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const ethAmount = this.web3.utils.fromWei(ethDetails.value, 'ether');
+    
+
+    
+
+    await this.createTsx({
+      recieved_token_amount: ethAmount,
+      recieved_token_name: 'ETH',
+      recieved_token_tsx_hash: tsx_hash,
+      tsx_status: 'Completed',
+      vadi_coins_transfered: true,
+      vadi_coin_transfer_tsx_hash: tsx_hash,
+      vadi_coin_amount: vadi_coins_transfered,
+      users_eth_address: details.from,
+    });
+
+    return {
+      tsx_hash, tsx_status:'Completed'
+    };
   }
 
   //// Repository Methods
