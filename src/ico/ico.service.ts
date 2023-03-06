@@ -18,10 +18,13 @@ import { HotWalletICO } from './entity/hot-wallet.ico.entity';
 import { PayPalIcoPayment } from './entity/paypal-ico.entity';
 const multichainWallet = require('multichain-crypto-wallet');
 const Web3 = require('web3');
+const ABI = require('abi.json');
 
 @Injectable()
 export class ICOService {
   web3: any;
+  account: any;
+  contract: any;
   constructor(
     @InjectRepository(HotWalletICO)
     private icoTsxsRepository: Repository<HotWalletICO>,
@@ -29,12 +32,16 @@ export class ICOService {
     private payPalRepository: Repository<PayPalIcoPayment>,
     private configService: ConfigService,
   ) {
-    this.web3 = new Web3(
-      // 'https://eth-goerli.g.alchemy.com/v2/G9aSmHyq0pCXRyGxOeC93wEDoxNiHCSj',
-      this.configService.get<string>("SEPOLIA_RPC")
-    );
+    this.web3 = new Web3(this.configService.get<string>('SEPOLIA_RPC'));
 
-    
+    this.web3.eth.accounts.wallet.add(
+      this.configService.get<string>('TREASURER_PRIVATE_KEY'),
+    );
+    this.account = this.web3.eth.accounts.wallet[0];
+    this.contract = new this.web3.eth.Contract(
+      ABI,
+      this.configService.get<string>('VADI_COIN_TRANSPARENT_CONTRACT_ADDRESS'),
+    );
   }
 
   async claimCoins(tsxHash: string, eth_address: string) {
@@ -61,10 +68,12 @@ export class ICOService {
           .stripHexPrefix(details.logs[0].topics[2])
           .slice(24)
           .toLowerCase() !=
-      '0x0dEc5A633dD6f91084Bc257f80BA29a4e9ed1Bb0'.toLocaleLowerCase()
+      this.configService
+        .get<string>('VADI_COIN_TRANSPARENT_CONTRACT_ADDRESS')
+        .toLocaleLowerCase()
     ) {
       throw new HttpException(
-        'The recieving address is not ours.',
+        'The recieving address does not belong to vadiVault.',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -88,7 +97,7 @@ export class ICOService {
     // a) USDC ( use USDC contract address )
     if (
       details.to.toLowerCase() ==
-      '0x1a0304acDB077F9d7e0D082a5a1aCE5F4d3b9B51'.toLowerCase()
+      this.configService.get<string>('USDC_ADDRESS').toLowerCase()
     ) {
       const [transaction] = await this.icoTsxsRepository.find({
         where: {
@@ -127,21 +136,17 @@ export class ICOService {
     }
   }
 
+  /// Calling Contract Method Transfer for sending coins
   async transferVadiCoins(address: string, amount: number) {
-    // Transferring ERC20 tokens from one address to another.
-    const transfer = await multichainWallet.transfer({
-      recipientAddress: address,
-      amount: amount.toFixed(2),
-      network: 'ethereum',
-      rpcUrl: this.configService.get<string>('GOERLI_RPC'),
-      privateKey: this.configService.get<string>('ADMIN_PRIVATE_KEY'),
-      gasPrice: '100', // Gas price is in Gwei. leave empty to use default gas price
-      tokenAddress: this.configService.get<string>(
-        'VADI_COIN_TRANSPARENT_CONTRACT_ADDRESS',
-      ),
-    });
+    const transfer = await this.contract.methods
+      .transfer(address, Math.floor(amount))
+      .send({
+        from: this.account.address,
+        gas: 490000,
+        gasPrice: 40000000000,
+      });
 
-    return transfer.hash;
+    return transfer.transactionHash;
   }
 
   async issueTokens(amountPaid: string, order_id: string) {
@@ -243,9 +248,9 @@ export class ICOService {
     const details = await this.web3.eth.getTransactionReceipt(tsx_hash);
     const ethDetails = await this.web3.eth.getTransaction(tsx_hash);
 
-    const vadi_coins_transfered = this.web3.utils.hexToNumber(details.logs[0].data) / 10**8;
-    
-    
+    const vadi_coins_transfered =
+      this.web3.utils.hexToNumber(details.logs[0].data) / 10 ** 8;
+
     if (
       details.to.toLocaleLowerCase() !=
       this.configService
@@ -258,9 +263,6 @@ export class ICOService {
       );
 
     const ethAmount = this.web3.utils.fromWei(ethDetails.value, 'ether');
-    
-
-    
 
     await this.createTsx({
       recieved_token_amount: ethAmount,
@@ -274,7 +276,8 @@ export class ICOService {
     });
 
     return {
-      tsx_hash, tsx_status:'Completed'
+      tsx_hash,
+      tsx_status: 'Completed',
     };
   }
 
@@ -329,7 +332,7 @@ export class ICOService {
   async checkTransactionStatus(hash: string) {
     const config = {
       method: 'get',
-      url: `https://api-goerli.etherscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=${hash}&apikey=${this.configService.get<string>(
+      url: `https://api-sepolia.etherscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=${hash}&apikey=${this.configService.get<string>(
         'ETHERSCAN_API_KEY',
       )}`,
       headers: {},
