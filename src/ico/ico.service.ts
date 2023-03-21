@@ -16,9 +16,9 @@ import { UpdateHotWalletICODTO } from './dto/update-ico-tsx.dto';
 import { UpdatePayPalPaymentDto } from './dto/update-paypal-payment.dto';
 import { HotWalletICO } from './entity/hot-wallet.ico.entity';
 import { PayPalIcoPayment } from './entity/paypal-ico.entity';
-const multichainWallet = require('multichain-crypto-wallet');
 const Web3 = require('web3');
-const ABI = require('abi.json');
+const ABI = require('./abi.json');
+
 
 @Injectable()
 export class ICOService {
@@ -32,7 +32,7 @@ export class ICOService {
     private payPalRepository: Repository<PayPalIcoPayment>,
     private configService: ConfigService,
   ) {
-    this.web3 = new Web3(this.configService.get<string>('SEPOLIA_RPC'));
+    this.web3 = new Web3(this.configService.get<string>('MAINNET_RPC'));
 
     this.web3.eth.accounts.wallet.add(
       this.configService.get<string>('TREASURER_PRIVATE_KEY'),
@@ -143,7 +143,7 @@ export class ICOService {
       .send({
         from: this.account.address,
         gas: 490000,
-        gasPrice: 40000000000,
+        gasPrice: 80000000000,
       });
 
     return transfer.transactionHash;
@@ -332,7 +332,7 @@ export class ICOService {
   async checkTransactionStatus(hash: string) {
     const config = {
       method: 'get',
-      url: `https://api-sepolia.etherscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=${hash}&apikey=${this.configService.get<string>(
+      url: `https://api.etherscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=${hash}&apikey=${this.configService.get<string>(
         'ETHERSCAN_API_KEY',
       )}`,
       headers: {},
