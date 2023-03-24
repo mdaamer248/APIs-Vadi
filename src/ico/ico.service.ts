@@ -61,7 +61,7 @@ export class ICOService {
       );
     }
 
-    // checking is the reciever is vadiVault or not
+    // checking is the reciever is vadiVault Owner or not
     if (
       '0x' +
         this.web3.utils
@@ -69,11 +69,11 @@ export class ICOService {
           .slice(24)
           .toLowerCase() !=
       this.configService
-        .get<string>('VADI_COIN_TRANSPARENT_CONTRACT_ADDRESS')
+        .get<string>('VADIVAULT_ADDRESS')
         .toLocaleLowerCase()
     ) {
       throw new HttpException(
-        'The recieving address does not belong to vadiVault.',
+        'The recieving address does not belong to vadiVault Owner.',
         HttpStatus.BAD_REQUEST,
       );
     }
