@@ -17,7 +17,7 @@ import { UpdatePayPalPaymentDto } from './dto/update-paypal-payment.dto';
 import { HotWalletICO } from './entity/hot-wallet.ico.entity';
 import { PayPalIcoPayment } from './entity/paypal-ico.entity';
 const Web3 = require('web3');
-const ABI = require('./abi.json');
+const ABI = require('../../abi.json');
 
 
 @Injectable()

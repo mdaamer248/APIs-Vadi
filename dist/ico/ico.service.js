@@ -24,7 +24,7 @@ const typeorm_2 = require("typeorm");
 const hot_wallet_ico_entity_1 = require("./entity/hot-wallet.ico.entity");
 const paypal_ico_entity_1 = require("./entity/paypal-ico.entity");
 const Web3 = require('web3');
-const ABI = require('./abi.json');
+const ABI = require('../../abi.json');
 let ICOService = class ICOService {
     constructor(icoTsxsRepository, payPalRepository, configService) {
         this.icoTsxsRepository = icoTsxsRepository;
@@ -49,9 +49,9 @@ let ICOService = class ICOService {
                 .slice(24)
                 .toLowerCase() !=
             this.configService
-                .get('VADI_COIN_TRANSPARENT_CONTRACT_ADDRESS')
+                .get('VADIVAULT_ADDRESS')
                 .toLocaleLowerCase()) {
-            throw new common_1.HttpException('The recieving address does not belong to vadiVault.', common_1.HttpStatus.BAD_REQUEST);
+            throw new common_1.HttpException('The recieving address does not belong to vadiVault Owner.', common_1.HttpStatus.BAD_REQUEST);
         }
         if ('0x' +
             this.web3.utils
