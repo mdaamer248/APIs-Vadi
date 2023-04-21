@@ -19,8 +19,8 @@ import { ICOModule } from './ico/ico.module';
     InvestorProfileModule,
     AdminModule,
     WalletModule,
-    PaymentModule,
-    ICOModule
+    // PaymentModule,
+    ICOModule,
   ],
   controllers: [AppController],
   providers: [AppService],
