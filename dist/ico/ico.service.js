@@ -48,9 +48,7 @@ let ICOService = class ICOService {
                 .stripHexPrefix(details.logs[0].topics[2])
                 .slice(24)
                 .toLowerCase() !=
-            this.configService
-                .get('VADIVAULT_ADDRESS')
-                .toLocaleLowerCase()) {
+            this.configService.get('VADIVAULT_ADDRESS').toLocaleLowerCase()) {
             throw new common_1.HttpException('The recieving address does not belong to vadiVault Owner.', common_1.HttpStatus.BAD_REQUEST);
         }
         if ('0x' +
@@ -236,77 +234,6 @@ let ICOService = class ICOService {
             value = status;
         return value;
     }
-    async createOrder(amount) {
-        const accessToken = await this.generateAccessToken();
-        const url = `${this.configService.get('BASE')}/v2/checkout/orders`;
-        const body = JSON.stringify({
-            intent: 'CAPTURE',
-            purchase_units: [
-                {
-                    amount: {
-                        currency_code: 'MXN',
-                        value: amount,
-                    },
-                },
-            ],
-        });
-        const config = {
-            method: 'post',
-            url: url,
-            headers: {
-                'Content-Type': 'application/json',
-                Prefer: 'return=representation',
-                Authorization: `Bearer ${accessToken}`,
-            },
-            data: body,
-        };
-        const orderID = await (0, axios_1.default)(config)
-            .then((res) => {
-            return res.data.id;
-        })
-            .catch((error) => console.log(error.res.data));
-        await this.createPayment({ order_id: orderID });
-        return { orderID };
-    }
-    async capturePayment(orderId) {
-        const accessToken = await this.generateAccessToken();
-        const url = `${this.configService.get('BASE')}/v2/checkout/orders/${orderId}/capture`;
-        const config = {
-            method: 'post',
-            url: url,
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`,
-            },
-        };
-        const res = await (0, axios_1.default)(config)
-            .then(function (response) {
-            return response.data;
-        })
-            .catch(function (error) {
-            console.log(error);
-        });
-        return res;
-    }
-    async generateAccessToken() {
-        const auth = Buffer.from(this.configService.get('CLIENT_ID') +
-            ':' +
-            this.configService.get('APP_SECRET')).toString('base64');
-        const config = {
-            url: `${this.configService.get('BASE')}/v1/oauth2/token`,
-            method: 'post',
-            data: 'grant_type=client_credentials',
-            headers: {
-                Authorization: `Basic ${auth}`,
-            },
-        };
-        const access_token = await (0, axios_1.default)(config)
-            .then((res) => {
-            return res.data.access_token;
-        })
-            .catch((e) => console.log(e));
-        return access_token;
-    }
     async createPayment(createPaymentDto) {
         const payment = await this.payPalRepository.create(createPaymentDto);
         await this.payPalRepository.save(payment);
@@ -316,6 +243,8 @@ let ICOService = class ICOService {
         const [paymentInfo] = await this.payPalRepository.find({
             where: { order_id },
         });
+        if (!paymentInfo)
+            throw new common_1.NotFoundException('Payment reciept with this orderId is not found.');
         return paymentInfo;
     }
     async getAllPayments() {
@@ -332,6 +261,10 @@ let ICOService = class ICOService {
         });
         await this.payPalRepository.save(payment);
         return payment;
+    }
+    async savePayment(payment) {
+        const updatedPayment = await this.payPalRepository.save(payment);
+        return updatedPayment;
     }
 };
 ICOService = __decorate([

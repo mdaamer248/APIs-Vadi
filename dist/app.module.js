@@ -16,7 +16,6 @@ const config_1 = require("@nestjs/config");
 const investor_profile_module_1 = require("./investor-profile/investor-profile.module");
 const admin_module_1 = require("./admin/admin.module");
 const wallet_module_1 = require("./wallet/wallet.module");
-const payment_module_1 = require("./payment/payment.module");
 const ico_module_1 = require("./ico/ico.module");
 let AppModule = class AppModule {
 };
@@ -29,8 +28,7 @@ AppModule = __decorate([
             investor_profile_module_1.InvestorProfileModule,
             admin_module_1.AdminModule,
             wallet_module_1.WalletModule,
-            payment_module_1.PaymentModule,
-            ico_module_1.ICOModule
+            ico_module_1.ICOModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

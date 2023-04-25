@@ -22,6 +22,7 @@ let ICOWebhookController = class ICOWebhookController {
         this.webHookService = webHookService;
     }
     async handleWebhook(body) {
+        console.log(JSON.stringify(body));
         if (body.event_type == 'CHECKOUT.ORDER.APPROVED') {
             return await this.webHookService.checkoutOrderApproved(body);
         }

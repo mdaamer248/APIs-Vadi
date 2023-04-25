@@ -18,9 +18,11 @@ const swagger_1 = require("@nestjs/swagger");
 const claim_coin_dto_1 = require("./dto/claim-coin.dto");
 const payment_amount_dto_1 = require("./dto/payment-amount.dto");
 const ico_service_1 = require("./ico.service");
+const paypal_service_1 = require("./paypal.service");
 let ICOController = class ICOController {
-    constructor(icoService) {
+    constructor(icoService, paypalService) {
         this.icoService = icoService;
+        this.paypalService = paypalService;
     }
     async claimVadiCoins(body) {
         const tsx_hash = await this.icoService.claimCoins(body.transaction_hash, body.eth_address);
@@ -31,11 +33,11 @@ let ICOController = class ICOController {
         return hash;
     }
     async create(amount) {
-        const orderId = await this.icoService.createOrder(amount.amount);
+        const orderId = await this.paypalService.createOrder(amount.amount);
         return orderId;
     }
     async captureOrder(orderID) {
-        const tsx = await this.icoService.capturePayment(orderID);
+        const tsx = await this.paypalService.capturePayment(orderID);
         return tsx;
     }
 };
@@ -70,7 +72,8 @@ __decorate([
 ICOController = __decorate([
     (0, swagger_1.ApiTags)('ICO'),
     (0, common_1.Controller)('ico'),
-    __metadata("design:paramtypes", [ico_service_1.ICOService])
+    __metadata("design:paramtypes", [ico_service_1.ICOService,
+        paypal_service_1.PayPalService])
 ], ICOController);
 exports.ICOController = ICOController;
 //# sourceMappingURL=ico.controller.js.map

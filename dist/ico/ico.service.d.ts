@@ -26,13 +26,9 @@ export declare class ICOService {
     updateTsx(updateTsxDto: UpdateHotWalletICODTO): Promise<HotWalletICO>;
     findByRecievedTsxHash(hash: string): Promise<HotWalletICO>;
     checkTransactionStatus(hash: string): Promise<string>;
-    createOrder(amount: string): Promise<{
-        orderID: any;
-    }>;
-    capturePayment(orderId: string): Promise<any>;
-    generateAccessToken(): Promise<any>;
     createPayment(createPaymentDto: CreatePayPalPaymentDto): Promise<PayPalIcoPayment>;
     getPaymentByOrderId(order_id: string): Promise<PayPalIcoPayment>;
     getAllPayments(): Promise<PayPalIcoPayment[]>;
     updatePayment(updatePaymentDto: UpdatePayPalPaymentDto): Promise<PayPalIcoPayment>;
+    savePayment(payment: PayPalIcoPayment): Promise<PayPalIcoPayment>;
 }

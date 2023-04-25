@@ -19,7 +19,6 @@ import { PayPalIcoPayment } from './entity/paypal-ico.entity';
 const Web3 = require('web3');
 const ABI = require('../../abi.json');
 
-
 @Injectable()
 export class ICOService {
   web3: any;
@@ -68,9 +67,7 @@ export class ICOService {
           .stripHexPrefix(details.logs[0].topics[2])
           .slice(24)
           .toLowerCase() !=
-      this.configService
-        .get<string>('VADIVAULT_ADDRESS')
-        .toLocaleLowerCase()
+      this.configService.get<string>('VADIVAULT_ADDRESS').toLocaleLowerCase()
     ) {
       throw new HttpException(
         'The recieving address does not belong to vadiVault Owner.',
@@ -352,97 +349,6 @@ export class ICOService {
     return value;
   }
 
-  ///////////// Paypal Methods
-
-  //////////////////////////  use the orders api to create an order //////////////////////////
-  async createOrder(amount: string) {
-    const accessToken = await this.generateAccessToken();
-    const url = `${this.configService.get<string>('BASE')}/v2/checkout/orders`;
-    const body = JSON.stringify({
-      intent: 'CAPTURE',
-      purchase_units: [
-        {
-          amount: {
-            currency_code: 'MXN',
-            value: amount,
-          },
-        },
-      ],
-    });
-
-    const config = {
-      method: 'post',
-      url: url,
-      headers: {
-        'Content-Type': 'application/json',
-        Prefer: 'return=representation',
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: body,
-    };
-
-    const orderID = await axios(config)
-      .then((res) => {
-        return res.data.id;
-      })
-      .catch((error) => console.log(error.res.data));
-
-    await this.createPayment({ order_id: orderID });
-
-    return { orderID };
-  }
-
-  // use the orders api to capture payment for an order
-  async capturePayment(orderId: string) {
-    const accessToken = await this.generateAccessToken();
-    const url = `${this.configService.get<string>(
-      'BASE',
-    )}/v2/checkout/orders/${orderId}/capture`;
-
-    const config = {
-      method: 'post',
-      url: url,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
-
-    const res = await axios(config)
-      .then(function (response) {
-        return response.data;
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-
-    return res;
-  }
-
-  // generate an access token using client id and app secret
-  async generateAccessToken() {
-    const auth = Buffer.from(
-      this.configService.get<string>('CLIENT_ID') +
-        ':' +
-        this.configService.get<string>('APP_SECRET'),
-    ).toString('base64');
-
-    const config = {
-      url: `${this.configService.get<string>('BASE')}/v1/oauth2/token`,
-      method: 'post',
-      data: 'grant_type=client_credentials',
-      headers: {
-        Authorization: `Basic ${auth}`,
-      },
-    };
-    const access_token = await axios(config)
-      .then((res) => {
-        return res.data.access_token;
-      })
-      .catch((e) => console.log(e));
-    return access_token;
-  }
-
   /// Repository Methods for Paypal Payment
   ///////// Repository Methods
 
@@ -458,6 +364,10 @@ export class ICOService {
     const [paymentInfo] = await this.payPalRepository.find({
       where: { order_id },
     });
+    if (!paymentInfo)
+      throw new NotFoundException(
+        'Payment reciept with this orderId is not found.',
+      );
     return paymentInfo;
   }
 
@@ -477,5 +387,10 @@ export class ICOService {
 
     await this.payPalRepository.save(payment);
     return payment;
+  }
+
+  async savePayment(payment: PayPalIcoPayment) {
+    const updatedPayment = await this.payPalRepository.save(payment);
+    return updatedPayment;
   }
 }

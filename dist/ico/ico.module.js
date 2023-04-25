@@ -15,14 +15,17 @@ const ico_controller_1 = require("./ico.controller");
 const ico_service_1 = require("./ico.service");
 const ico_webhook_controller_1 = require("./ico.webhook.controller");
 const ico_webhook_service_1 = require("./ico.webhook.service");
+const paypal_service_1 = require("./paypal.service");
 let ICOModule = class ICOModule {
 };
 ICOModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([hot_wallet_ico_entity_1.HotWalletICO]),
-            typeorm_1.TypeOrmModule.forFeature([paypal_ico_entity_1.PayPalIcoPayment])],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([hot_wallet_ico_entity_1.HotWalletICO]),
+            typeorm_1.TypeOrmModule.forFeature([paypal_ico_entity_1.PayPalIcoPayment]),
+        ],
         controllers: [ico_controller_1.ICOController, ico_webhook_controller_1.ICOWebhookController],
-        providers: [ico_service_1.ICOService, ico_webhook_service_1.ICOWebHookService],
+        providers: [ico_service_1.ICOService, ico_webhook_service_1.ICOWebHookService, paypal_service_1.PayPalService],
     })
 ], ICOModule);
 exports.ICOModule = ICOModule;

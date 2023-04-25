@@ -12,39 +12,33 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ICOWebHookService = void 0;
 const common_1 = require("@nestjs/common");
 const ico_service_1 = require("./ico.service");
+const paypal_service_1 = require("./paypal.service");
 let ICOWebHookService = class ICOWebHookService {
-    constructor(icoService) {
+    constructor(icoService, paypalService) {
         this.icoService = icoService;
+        this.paypalService = paypalService;
     }
     async checkoutOrderApproved(body) {
         const order_id = body.resource.id;
-        const payer_name = body.resource.payer.name.given_name +
-            ' ' +
-            body.resource.payer.name.surname;
-        const payer_email = body.resource.payer.email_address;
         const status = body.resource.status;
-        await this.icoService.updatePayment({
-            order_id,
-            payer_email,
-            payer_name,
-            status,
-        });
-        return 'Payment has been updated';
+        const orderInfo = await this.icoService.getPaymentByOrderId(order_id);
+        if (orderInfo.status !== 'COMPLETED') {
+            orderInfo.status = status;
+            await this.icoService.savePayment(orderInfo);
+            return 'Payment has been updated';
+        }
+        return 'Payment is already been confirmed.';
     }
     async paymentCaptureCompleted(body) {
         const order_id = body.resource.supplementary_data.related_ids.order_id;
-        const currency = body.resource.amount.currency_code;
-        const gross_amount = body.resource.seller_receivable_breakdown.gross_amount.value;
         const net_amount = body.resource.seller_receivable_breakdown.net_amount.value;
-        const paypal_fee = body.resource.seller_receivable_breakdown.paypal_fee.value;
-        await this.icoService.updatePayment({
-            order_id,
-            currency,
-            gross_amount,
-            net_amount,
-            paypal_fee,
-        });
-        return 'Payment has been updated';
+        const orderInfo = await this.icoService.getPaymentByOrderId(order_id);
+        if (!orderInfo.net_amount) {
+            orderInfo.status = net_amount;
+            await this.icoService.savePayment(orderInfo);
+            return 'Payment has been updated';
+        }
+        return 'Payment already has net amount with it.';
     }
     async submitEthAddress(order_id, eth_address) {
         const updatedPayment = await this.icoService.updatePayment({
@@ -57,9 +51,14 @@ let ICOWebHookService = class ICOWebHookService {
         let hash;
         const orderInfo = await this.icoService.getPaymentByOrderId(orderId);
         if (!orderInfo.eth_address)
-            return 'First submit your eth address';
+            return new common_1.HttpException('Submit your eth address first before claiming coins.', common_1.HttpStatus.EXPECTATION_FAILED);
         if (orderInfo.vadi_coin_transfered)
-            return 'Already claimed';
+            return new common_1.HttpException('Claimed for this orderId has already been made.', common_1.HttpStatus.EXPECTATION_FAILED);
+        if (orderInfo.status !== 'COMPLETED') {
+            const data = await this.paypalService.getOrderDetailsById(orderId);
+            orderInfo.status = data.status;
+            await this.icoService.savePayment(orderInfo);
+        }
         if (orderInfo.net_amount) {
             hash = await this.icoService.issueTokens(orderInfo.net_amount, orderId);
             return hash;
@@ -69,7 +68,8 @@ let ICOWebHookService = class ICOWebHookService {
 };
 ICOWebHookService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [ico_service_1.ICOService])
+    __metadata("design:paramtypes", [ico_service_1.ICOService,
+        paypal_service_1.PayPalService])
 ], ICOWebHookService);
 exports.ICOWebHookService = ICOWebHookService;
 //# sourceMappingURL=ico.webhook.service.js.map
