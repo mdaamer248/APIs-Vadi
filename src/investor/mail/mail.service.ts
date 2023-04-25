@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InvestorService } from '../investor.service';
 import { MailerService } from '@nestjs-modules/mailer';
+import { Investor } from '../entities/investor.entity';
 
 @Injectable()
 export class MailService {
   constructor(
-    private investorService: InvestorService,
     private mailerService: MailerService,
   ) {}
 
-  async sendUserConfirmationMail(email: string, validationCode: number) {
-    const [investor] = await this.investorService.find(email);
+  async sendUserConfirmationMail(investor: Investor, validationCode: number) {
     const sendMail = await this.mailerService.sendMail({
-      to: 'mdaamer248@gmail.com',
+      to: investor.email,
       subject: 'Welcome to Vadi,Here is your code',
       text: 'welcome',
       html: `<b style="font-weight:200;font-size:18px;">Hello,Thanks for signup!</b>
@@ -23,17 +22,17 @@ export class MailService {
              Inore this email</p><p style="font-size:13px;line-height: 0.6;padding-top: 60px;">Thanks,</p>
              <p style="font-size:13px;line-height: 0.3;">Team Vadi</p>`,
       context: {
-        name: `${email}`,
+        name: `${investor.email}`,
       },
     });
     if (sendMail) {
-      const newValidationCode = validationCode;
-      const newOtpIssuedAt = Math.floor(Date.now() / 1000);
-      await this.investorService.update(investor.id, {
-        newValidationCode,
-        newOtpIssuedAt,
-      });
+      const otpIssuedAt = Math.floor(Date.now() / 1000);
+      // await this.investorService.update(investor.id, {
+      //   validationCode,
+      //   otpIssuedAt,
+      // });
       return {
+        otpIssuedAt,
         code: 200,
         message: 'mail sent',
         verificationcode: validationCode,
@@ -42,10 +41,9 @@ export class MailService {
   }
 
   //Sending password reset link with mail
-  async sendUserPasswordResetEMail(email: string, resetToken: string) {
-    const url = `http://localhost:4000/api/investor/reset-password?token=${resetToken}`;
-    const [investor] = await this.investorService.find(email);
-
+  async sendUserPasswordResetEMail(investor: Investor, email: string) {
+    //const url = `http://localhost:4000/api/investor/reset-password?token=${resetToken}`;
+    const url = `http://134.209.96.231/?email=${email}`;
     const sendMail = await this.mailerService.sendMail({
       to: email,
       subject: 'Use the following link to reset your password.',
@@ -66,12 +64,16 @@ export class MailService {
     });
 
     if (sendMail) {
-      const newResetToken = resetToken;
-      const newResetTokenIssuedAt = Math.floor(Date.now() / 1000);
-      await this.investorService.update(investor.id, {newResetToken, newResetTokenIssuedAt})
+      //const newResetToken = resetToken;
+      const resetTokenIssuedAt = Math.floor(Date.now() / 1000);
+      //await this.investorService.update(investor.id, {newResetToken, newResetTokenIssuedAt})
+      // await this.investorService.update(investor.id, {resetTokenIssuedAt})
+
       return {
+        resetTokenIssuedAt,
         code: 200,
-        message: 'mail sent',
+        message: 'Mail sent successfully',
+        email:email
       };
     }
   }

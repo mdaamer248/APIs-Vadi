@@ -4,24 +4,25 @@ import { InvestorController } from './investor.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Investor } from './entities/investor.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
 import { MailService } from './mail/mail.service';
+import { InvestorProfile } from 'src/investor-profile/entities/investor-profile.entity';
+import { User } from './entities/user.entity';
+import { InvestorProfileModule } from 'src/investor-profile/investor-profile.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Investor]),
-    ConfigModule.forRoot({
-      envFilePath:'.env',
-    }),
+    TypeOrmModule.forFeature([User]),
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions:{
-        expiresIn: '24h'
-      }
+      secret:`HI There!`,
+      signOptions: {
+        expiresIn: '24h',
+      },
     }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
@@ -31,13 +32,13 @@ import { MailService } from './mail/mail.service';
           host: 'smtp.gmail.com',
           secure: false,
           auth: {
-            user:process.env.MAIL_USERNAME,
-            pass:process.env.MAIL_PASSWORD
+            user: process.env.MAIL_USERNAME,
+            pass: process.env.MAIL_PASSWORD,
           },
         },
         template: {
           dir: join(__dirname, '/templates'),
-          adapter: new HandlebarsAdapter,
+          adapter: new HandlebarsAdapter(),
           options: {
             strict: true,
           },
@@ -46,6 +47,7 @@ import { MailService } from './mail/mail.service';
     }),
   ],
   controllers: [InvestorController],
-  providers: [InvestorService, AuthService, MailService]
+  providers: [InvestorService, AuthService, MailService],
+  exports: [InvestorService],
 })
 export class InvestorModule {}

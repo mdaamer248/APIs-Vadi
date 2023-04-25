@@ -1,0 +1,36 @@
+import { Investor } from 'src/investor/entities/investor.entity';
+export declare class InvestorProfile {
+    id: number;
+    email: string;
+    range: string;
+    lower: number;
+    upper: number;
+    fundAmount: number;
+    totalAmountFunded: number;
+    firstName: string;
+    lastName: string;
+    fullName: string;
+    dateOfBirth: Date;
+    countryOfBirth: string;
+    countryCode: number;
+    cURP: number;
+    rFC: number;
+    phoneNumber: number;
+    tax: number;
+    occupation: string;
+    nationality: string;
+    street: string;
+    exterior: string;
+    interior: string;
+    postalCode: number;
+    colony: string;
+    muncipiality: string;
+    state: string;
+    idFront: string;
+    idBackSide: string;
+    idNumber: string;
+    addressDoc: string;
+    isGeo: string;
+    isProfileCompleted: boolean;
+    investor: Investor;
+}

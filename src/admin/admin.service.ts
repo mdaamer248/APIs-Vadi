@@ -12,6 +12,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from './entities/admin.entity';
 import { UpdateAdminDto } from './dto/update-admin.dto';
+import { InvestorProfile } from 'src/investor-profile/entities/investor-profile.entity';
+import { Investor } from 'src/investor/entities/investor.entity';
+
 const scrypt = promisify(_scrypt);
 
 @Injectable()
@@ -19,6 +22,10 @@ export class AdminService {
   constructor(
     @InjectRepository(Admin)
     private adminRepository: Repository<Admin>,
+    @InjectRepository(InvestorProfile) 
+    private investorProfileRepository: Repository<InvestorProfile>,
+    @InjectRepository(Investor) 
+    private investorRepository: Repository<Investor>,
   ) {}
 
   // Create the Admin and save it to the repository.
@@ -82,5 +89,44 @@ export class AdminService {
     const [admin] = await this.adminRepository.find({ where: { email } });
      await this.adminRepository.delete(admin.id);
     return admin;
+  }
+
+   //create investor by admin
+   async createInvestor(email: string, password: string) {
+    try {
+      const investor = {email, password};
+      const newInvestor = this.investorRepository.create(investor);
+      newInvestor.isConfirmed = true,
+      await this.investorRepository.save(newInvestor);
+      return newInvestor;
+    } catch (err) {
+      console.log('Error creating user', err);
+      throw new InternalServerErrorException();
+    }
+  }
+  
+//Delete investor
+  async removeInvestor(email: string) {
+    const [investor] = await this.investorRepository.find({ where: { email } });
+    if(investor){
+     await this.investorRepository.delete(investor.id);
+     return { message: "investor deleted successfully"}
+    }else{
+      return { message:"investor not found"}
+    }
+  }
+  async findAllInvestors() {
+    const query = this.investorProfileRepository.createQueryBuilder('pr');
+    query
+      .select([
+        'i.id as investor_id,i.role,(i.is_confirmed) as isVerified,pr.*'
+      ])
+      .innerJoin('investor', 'i', 'pr.email = i.email')
+      .groupBy('pr.id,i.id');
+    const result = {
+      count: await query.getCount(),
+      data: await query.getRawMany(),
+    };
+    return result;
   }
 }

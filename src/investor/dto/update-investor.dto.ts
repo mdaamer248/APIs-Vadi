@@ -1,44 +1,54 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsString, IsNumber, IsBoolean} from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsString, IsNumber, IsBoolean } from 'class-validator';
+import { Wallet } from 'src/wallet/entities/wallet.entity';
 
-export class UpdateInvestorDto  {
+export class UpdateInvestorDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  newUserName?: string;
-
-  @ApiProperty({ required: false })
-  @IsString()
-  @IsOptional()
-  newPassword?: string;
+  userName?: string;
 
   @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
-  newEmail?: string;
+  password?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  email?: string;
 
   @ApiProperty({ required: false })
   @IsNumber()
   @IsOptional()
-  newValidationCode?: number;
+  validationCode?: number;
 
   @ApiProperty({ required: false })
   @IsNumber()
   @IsOptional()
-  newOtpIssuedAt?: number;
+  otpIssuedAt?: number;
 
   @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
-  newResetToken?: string;
+  resetToken?: string;
 
   @ApiProperty({ required: false })
   @IsNumber()
   @IsOptional()
-  newResetTokenIssuedAt?: number;
+  resetTokenIssuedAt?: number;
 
   @ApiProperty({ required: false })
   @IsBoolean()
   @IsOptional()
-  newIsConfirmed?: boolean;
+  isConfirmed?: boolean;
+
+  @ApiProperty({ required: false })
+  @IsBoolean()
+  @IsOptional()
+  isTokenSubscribed?: boolean;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  wallet?: Wallet;
 }

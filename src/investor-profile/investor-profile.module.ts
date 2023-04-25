@@ -5,16 +5,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { InvestorProfile } from './entities/investor-profile.entity';
 import { MulterModule } from '@nestjs/platform-express';
-
+import { InvestorModule } from 'src/investor/investor.module';
 
 @Module({
-  imports: [ TypeOrmModule.forFeature([InvestorProfile]),
-  ConfigModule.forRoot({
-    envFilePath:'.env',
-  }), MulterModule.register({
-    dest: './files',
-  })],
+  imports: [
+    TypeOrmModule.forFeature([InvestorProfile]),
+    MulterModule.register({
+      dest: './files',
+    }),
+    InvestorModule
+  ],
   controllers: [InvestorProfileController],
-  providers: [InvestorProfileService]
+  providers: [InvestorProfileService],
 })
 export class InvestorProfileModule {}
