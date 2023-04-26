@@ -46,7 +46,7 @@ export class PayPalService {
       .catch((error) => console.log(error.res.data));
 
     await this.icoService.createPayment({ order_id: orderID });
-
+    console.log('OrderId  ->', orderID);
     return { orderID };
   }
 
@@ -69,6 +69,7 @@ export class PayPalService {
 
     const res = await axios(config)
       .then(function (response) {
+        console.log(JSON.stringify(response.data));
         return response.data;
       })
       .catch(function (error) {

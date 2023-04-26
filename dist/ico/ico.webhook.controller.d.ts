@@ -6,4 +6,5 @@ export declare class ICOWebhookController {
     handleWebhook(body: any): Promise<"Payment has been updated" | "Payment is already been confirmed." | "Payment already has net amount with it.">;
     submitEthAddress(body: SubmitICOEthAddressDTO): Promise<import("./entity/paypal-ico.entity").PayPalIcoPayment>;
     claimVadiCoinsByOrderId(orderId: string): Promise<any>;
+    getOrderDetailsByOrderId(orderId: string): Promise<any>;
 }

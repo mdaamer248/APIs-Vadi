@@ -38,6 +38,10 @@ let ICOWebhookController = class ICOWebhookController {
         const tsx_hash = await this.webHookService.issueVadiCoins(orderId);
         return tsx_hash;
     }
+    async getOrderDetailsByOrderId(orderId) {
+        const tsx_hash = await this.webHookService.getOrderDetailsById(orderId);
+        return tsx_hash;
+    }
 };
 __decorate([
     (0, common_1.Post)('/order/completion'),
@@ -61,6 +65,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], ICOWebhookController.prototype, "claimVadiCoinsByOrderId", null);
+__decorate([
+    (0, common_1.Get)('/paypal/get_order_details/:orderId'),
+    __param(0, (0, common_1.Param)('orderId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ICOWebhookController.prototype, "getOrderDetailsByOrderId", null);
 ICOWebhookController = __decorate([
     (0, swagger_1.ApiTags)('ICO/WEBHOOK'),
     (0, common_1.Controller)('ico/webhook'),

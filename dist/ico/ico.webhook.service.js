@@ -65,6 +65,10 @@ let ICOWebHookService = class ICOWebHookService {
         }
         return new common_1.HttpException('Paypal Have not confirmed your payment yet. Try after some time, with the OrderId.', common_1.HttpStatus.EXPECTATION_FAILED);
     }
+    async getOrderDetailsById(orderId) {
+        const details = await this.paypalService.getOrderDetailsById(orderId);
+        return details;
+    }
 };
 ICOWebHookService = __decorate([
     (0, common_1.Injectable)(),

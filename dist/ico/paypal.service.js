@@ -52,6 +52,7 @@ let PayPalService = class PayPalService {
         })
             .catch((error) => console.log(error.res.data));
         await this.icoService.createPayment({ order_id: orderID });
+        console.log('OrderId  ->', orderID);
         return { orderID };
     }
     async capturePayment(orderId) {
@@ -68,6 +69,7 @@ let PayPalService = class PayPalService {
         };
         const res = await (0, axios_1.default)(config)
             .then(function (response) {
+            console.log(JSON.stringify(response.data));
             return response.data;
         })
             .catch(function (error) {

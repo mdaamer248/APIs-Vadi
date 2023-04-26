@@ -5,6 +5,7 @@ import { ICOService } from './ico.service';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { PayPalService } from './paypal.service';
+import { defaultThrottleConfig } from 'rxjs/internal/operators/throttle';
 
 @Injectable()
 export class ICOWebHookService {
@@ -91,5 +92,11 @@ export class ICOWebHookService {
       'Paypal Have not confirmed your payment yet. Try after some time, with the OrderId.',
       HttpStatus.EXPECTATION_FAILED,
     );
+  }
+
+  //// Get Orderdetails by orderId
+  async getOrderDetailsById(orderId: string) {
+    const details = await this.paypalService.getOrderDetailsById(orderId);
+    return details;
   }
 }

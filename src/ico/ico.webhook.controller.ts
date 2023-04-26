@@ -44,9 +44,9 @@ export class ICOWebhookController {
     return tsx_hash;
   }
 
-  // @Get('/paypal/get_order_details/:orderId')
-  // async getOrderDetailsByOrderId(@Param('orderId') orderId: string) {
-  //   const tsx_hash = await this.webHookService.getOrderDetailsById(orderId);
-  //   return tsx_hash;
-  // }
+  @Get('/paypal/get_order_details/:orderId')
+  async getOrderDetailsByOrderId(@Param('orderId') orderId: string) {
+    const tsx_hash = await this.webHookService.getOrderDetailsById(orderId);
+    return tsx_hash;
+  }
 }
