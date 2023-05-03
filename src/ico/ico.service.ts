@@ -47,18 +47,16 @@ export class ICOService {
     let tokenRecieved: number;
     let tsx_hash;
     const details = await this.web3.eth.getTransactionReceipt(tsxHash);
-    // console.log(details);
 
     // Checking the tsx hash belongs to transfer function or not
     if (
       details.logs[0].topics[0] !=
       '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef' // keccak hash of transfer function
-    ) {
+    )
       throw new HttpException(
         'Transaction hash is not of Transfer Function',
         HttpStatus.BAD_REQUEST,
       );
-    }
 
     // checking is the reciever is vadiVault Owner or not
     if (
@@ -83,14 +81,13 @@ export class ICOService {
           .slice(24)
           .toLowerCase() !=
       eth_address.toLowerCase()
-    ) {
+    )
       throw new HttpException(
         'This transaction hash does not belongs to you',
         HttpStatus.BAD_REQUEST,
       );
-    }
 
-    // Checking which token we got
+    //////////// Checking which token we got
     // a) USDC ( use USDC contract address )
     if (
       details.to.toLowerCase() ==
@@ -120,6 +117,47 @@ export class ICOService {
           recieved_token_amount: tokenRecieved,
           users_eth_address: eth_address,
           recieved_token_name: 'USDC',
+          tsx_status: 'Completed',
+          vadi_coin_amount: 20 * tokenRecieved,
+          vadi_coins_transfered: true,
+          vadi_coin_transfer_tsx_hash: tsx_hash,
+        };
+
+        await this.createTsx(icoTsx);
+      }
+
+      return tsx_hash;
+    }
+
+    // a) USDT ( use USDT contract address )
+    if (
+      details.to.toLowerCase() ==
+      this.configService.get<string>('USDT_ADDRESS').toLowerCase()
+    ) {
+      const [transaction] = await this.icoTsxsRepository.find({
+        where: {
+          recieved_token_tsx_hash: tsxHash,
+        },
+      });
+
+      if (transaction && transaction.tsx_status == 'Completed') {
+        throw new HttpException(
+          'Vadi Coins are already claimed for this TSX Hash',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      tokenRecieved =
+        this.web3.utils.hexToNumberString(details.logs[0].data) / 10 ** 6;
+      // divide by  10 ** decimal
+
+      tsx_hash = await this.transferVadiCoins(eth_address, 20 * tokenRecieved);
+      const status = await this.checkTransactionStatus(tsx_hash);
+      if (status == '"1"') {
+        const icoTsx = {
+          recieved_token_tsx_hash: tsxHash,
+          recieved_token_amount: tokenRecieved,
+          users_eth_address: eth_address,
+          recieved_token_name: 'USDT',
           tsx_status: 'Completed',
           vadi_coin_amount: 20 * tokenRecieved,
           vadi_coins_transfered: true,
