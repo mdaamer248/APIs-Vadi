@@ -10,17 +10,19 @@ import { WalletModule } from './wallet/wallet.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PaymentModule } from './payment/payment.module';
 import { ICOModule } from './ico/ico.module';
+import { ResourcesModule } from './resources/resources.module';
 
 @Module({
   imports: [
-    InvestorModule,
-    DatabaseModule,
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
-    InvestorProfileModule,
-    AdminModule,
-    WalletModule,
+    // InvestorModule,
+    // DatabaseModule,
+    // ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
+    // InvestorProfileModule,
+    // AdminModule,
+    // WalletModule,
     // PaymentModule,
-    ICOModule,
+    // ICOModule,
+    ResourcesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -10,25 +10,13 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
-const investor_module_1 = require("./investor/investor.module");
-const database_module_1 = require("./database/database.module");
-const config_1 = require("@nestjs/config");
-const investor_profile_module_1 = require("./investor-profile/investor-profile.module");
-const admin_module_1 = require("./admin/admin.module");
-const wallet_module_1 = require("./wallet/wallet.module");
-const ico_module_1 = require("./ico/ico.module");
+const resources_module_1 = require("./resources/resources.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            investor_module_1.InvestorModule,
-            database_module_1.DatabaseModule,
-            config_1.ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
-            investor_profile_module_1.InvestorProfileModule,
-            admin_module_1.AdminModule,
-            wallet_module_1.WalletModule,
-            ico_module_1.ICOModule,
+            resources_module_1.ResourcesModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
