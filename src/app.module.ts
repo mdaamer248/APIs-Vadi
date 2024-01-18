@@ -14,14 +14,14 @@ import { ResourcesModule } from './resources/resources.module';
 
 @Module({
   imports: [
-    // InvestorModule,
-    // DatabaseModule,
-    // ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
-    // InvestorProfileModule,
-    // AdminModule,
-    // WalletModule,
-    // PaymentModule,
-    // ICOModule,
+    InvestorModule,
+    DatabaseModule,
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
+    InvestorProfileModule,
+    AdminModule,
+    WalletModule,
+    PaymentModule,
+    ICOModule,
     ResourcesModule,
   ],
   controllers: [AppController],
