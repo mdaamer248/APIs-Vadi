@@ -27,6 +27,7 @@ export class AuthService {
     private investorService: InvestorService,
     private jwtService: JwtService,
     private mailService: MailService,
+    private investorProfileService: InvestorProfileService,
   ) {}
 
   async signup(createInvestorDto: CreateInvestorDto) {
@@ -65,7 +66,7 @@ export class AuthService {
 
   async signin(email: string, password: string) {
     const [investor] = await this.investorService.find(email);
-    // const profile = await this.investorProfileService.findByEmail(email);
+    const profile = await this.investorProfileService.findByEmail(email);
     // console.log(profile);
 
     if (!investor) {
@@ -89,25 +90,18 @@ export class AuthService {
     const id = investor.id;
     const isVerified = investor.isConfirmed;
     const isTokenSubscribed = investor.isTokenSubscribed;
-    // if (profile && isVerified == true) {
-    //   var isProfileCompleted = profile.isProfileCompleted;
-    // } else {
-    //   var isProfileCompleted = false;
-    // }
 
-    // return {
-    //   access_token: this.jwtService.sign(payload),
-    //   message: 'Login Success',
-    //   isVerified,
-    //   isProfileCompleted,
-    //   isTokenSubscribed,
-    //   mail,
-    //   id,
-    // };
+    const isProfileCompleted =
+      profile && isVerified == true ? profile.isProfileCompleted : false;
 
     return {
       access_token: this.jwtService.sign(payload),
       message: 'Login Success',
+      isVerified,
+      isProfileCompleted,
+      isTokenSubscribed,
+      mail,
+      id,
     };
   }
 
@@ -173,10 +167,14 @@ export class AuthService {
 
   // Get Otp for verifying Email address of investor
   async getOTP(email: string) {
-    const investor = await this.investorService.findByEmail(email)
+    const investor = await this.investorService.findByEmail(email);
     const validationCode = Math.floor(Math.random() * 1000000);
-    const {otpIssuedAt,... result} = await this.mailService.sendUserConfirmationMail(investor, validationCode);
-    await this.investorService.update(investor.id, {validationCode, otpIssuedAt})
+    const { otpIssuedAt, ...result } =
+      await this.mailService.sendUserConfirmationMail(investor, validationCode);
+    await this.investorService.update(investor.id, {
+      validationCode,
+      otpIssuedAt,
+    });
     return result;
   }
 
