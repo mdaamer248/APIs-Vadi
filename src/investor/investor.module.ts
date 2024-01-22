@@ -19,7 +19,7 @@ import { InvestorProfileModule } from 'src/investor-profile/investor-profile.mod
     TypeOrmModule.forFeature([Investor]),
     TypeOrmModule.forFeature([User]),
     JwtModule.register({
-      secret:`HI There!`,
+      secret: `HI There!`,
       signOptions: {
         expiresIn: '24h',
       },
@@ -45,6 +45,7 @@ import { InvestorProfileModule } from 'src/investor-profile/investor-profile.mod
         },
       }),
     }),
+    // InvestorProfileModule,
   ],
   controllers: [InvestorController],
   providers: [InvestorService, AuthService, MailService],

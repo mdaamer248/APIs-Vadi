@@ -13,9 +13,10 @@ import { InvestorModule } from 'src/investor/investor.module';
     MulterModule.register({
       dest: './files',
     }),
-    InvestorModule
+    InvestorModule,
   ],
   controllers: [InvestorProfileController],
   providers: [InvestorProfileService],
+  exports: [InvestorProfileService],
 })
 export class InvestorProfileModule {}

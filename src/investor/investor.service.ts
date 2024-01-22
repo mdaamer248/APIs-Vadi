@@ -56,11 +56,9 @@ export class InvestorService {
     }
   }
 
-
   // Update the investor
   // async update(id: number, updateInvestorDto: UpdateInvestorDto) {
   async update(id: number, updateInvestorDto: any) {
-
     const investor = await this.findOne(id);
     const keys = Object.keys(updateInvestorDto);
     if (keys.includes('password'))
@@ -93,11 +91,13 @@ export class InvestorService {
 
   // Find the Investor By Id
   async findOne(id: number) {
-    const investor = await this.investorRepository.findOne({ where: { id }, relations:['wallet'] });
+    const investor = await this.investorRepository.findOne({
+      where: { id },
+      relations: ['wallet'],
+    });
     if (!investor) throw new NotFoundException();
     return investor;
   }
-
 
   // Get investor by Email
   async findByEmail(email: string) {
@@ -106,19 +106,14 @@ export class InvestorService {
       relations: ['wallet'],
     });
 
-
     investors.forEach((investor) => {
-      if(investor.email == email ) inv = investor;
-    })
+      if (investor.email == email) inv = investor;
+    });
 
-    if(!inv) throw new NotFoundException('Investor Not found');
+    if (!inv) throw new NotFoundException('Investor Not found');
     // console.log(investor)
     return inv;
   }
-
-
-
-
 
   async sendOTP(dto: MobileDto) {
     const { dailcode, mobile } = dto;
@@ -194,7 +189,10 @@ export class InvestorService {
 
   // Find the investor by Email
   find(email: string) {
-    return this.investorRepository.find({ where: { email } });
+    return this.investorRepository.find({
+      where: { email },
+      relations: ['investorProfile'],
+    });
   }
 
   // Delete the investor by Id

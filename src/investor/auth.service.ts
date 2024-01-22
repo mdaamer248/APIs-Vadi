@@ -26,8 +26,7 @@ export class AuthService {
   constructor(
     private investorService: InvestorService,
     private jwtService: JwtService,
-    private mailService: MailService,
-    private investorProfileService: InvestorProfileService,
+    private mailService: MailService, // private investorProfileService: InvestorProfileService,
   ) {}
 
   async signup(createInvestorDto: CreateInvestorDto) {
@@ -66,7 +65,7 @@ export class AuthService {
 
   async signin(email: string, password: string) {
     const [investor] = await this.investorService.find(email);
-    const profile = await this.investorProfileService.findByEmail(email);
+    // const profile = await this.investorProfileService.findByEmail(email);
     // console.log(profile);
 
     if (!investor) {
@@ -92,7 +91,9 @@ export class AuthService {
     const isTokenSubscribed = investor.isTokenSubscribed;
 
     const isProfileCompleted =
-      profile && isVerified == true ? profile.isProfileCompleted : false;
+      investor.investorProfile && isVerified == true
+        ? investor.investorProfile.isProfileCompleted
+        : false;
 
     return {
       access_token: this.jwtService.sign(payload),
